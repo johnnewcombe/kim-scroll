@@ -226,8 +226,8 @@
   223 |  1              scroll.asm     46 | Code        | 11 |         |    2 | 00/020C : A9 00       |             lda   #$00           ; store initial value for Y in zero page
   224 |  1              scroll.asm     47 | Code        | 11 |         |    2 | 00/020E : 85 00       |             sta   $00            
   225 |  1              scroll.asm     48 | Empty       | 11 |         |    0 | 00/0210               |                                  
-  226 |  1              scroll.asm     49 | Code        | 11 |         |    2 | 00/0210 : A9 FF       |             LDA   #$FF           
-  227 |  1              scroll.asm     50 | Code        | 11 |         |    3 | 00/0212 : 8D 07 17    |             STA   $1707          ; set timer division
+  226 |  1              scroll.asm     49 | Code        | 11 |         |    2 | 00/0210 : A9 FF       |             lda   #$FF           
+  227 |  1              scroll.asm     50 | Code        | 11 |         |    3 | 00/0212 : 8D 07 17    |             sta   $1707          ; set timer division
   228 |  1              scroll.asm     51 | Empty       | 11 |         |    0 | 00/0215               |                                  
   229 |  1              scroll.asm     52 | Empty       | 11 |         |    0 | 00/0215               | DISPLOOP                         
   230 |  1              scroll.asm     53 | Code        | 11 |         |    2 | 00/0215 : A4 00       |             ldy   $00            ; initialise character offset from Zero Page
@@ -237,63 +237,49 @@
   234 |  1              scroll.asm     57 | Code        | 11 |         |    2 | 00/0219 : A9 00       |             lda   #$00           
   235 |  1              scroll.asm     58 | Code        | 11 |         |    3 | 00/021B : 8D 40 17    |             sta   {$1740}        ; do it this way
   236 |  1              scroll.asm     59 | Code        | 11 |         |    3 | 00/021E : 8E 42 17    |             stx   {$1742}        ;   to remove flicker
-  237 |  1              scroll.asm     60 | Comment     | 11 |         |    0 | 00/0221               |             ;lda (DATAINDEX),y
-  238 |  1              scroll.asm     61 | Code        | 11 |  2      |    3 | 00/0221 : B9 52 02    |             lda   DATA,y         
-  239 |  1              scroll.asm     62 | Code        | 11 |         |    3 | 00/0224 : 8D 40 17    |             sta   {$1740}        
-  240 |  1              scroll.asm     63 | Empty       | 11 |         |    0 | 00/0227               |                                  
-  241 |  1              scroll.asm     64 | Empty       | 11 |         |    0 | 00/0227               |                                  
-  242 |  1              scroll.asm     65 | Comment     | 11 |         |    0 | 00/0227               | ;-----------------------------------------------------------------------------
-  243 |  1              scroll.asm     66 | Comment     | 11 |         |    0 | 00/0227               | ; delay to allow the leds to reach full brightness
-  244 |  1              scroll.asm     67 | Comment     | 11 |         |    0 | 00/0227               | ;-----------------------------------------------------------------------------
-  245 |  1              scroll.asm     68 | Code        | 11 |         |    1 | 00/0227 : 98          |             tya                  ; delay added to allow the led to fully light
-  246 |  1              scroll.asm     69 | Code        | 11 |         |    2 | 00/0228 : A0 04       |             ldy   #$04           ;   helps a little with the genuine KIM-1
-  247 |  1              scroll.asm     70 | Empty       | 11 |         |    0 | 00/022A               | CHARDELAY                        
-  248 |  1              scroll.asm     71 | Code        | 11 |         |    1 | 00/022A : 88          |             dey                  
-  249 |  1              scroll.asm     72 | Code        | 11 |         |    2 | 00/022B : D0 FD       |             bne   CHARDELAY      ; glow up character
-  250 |  1              scroll.asm     73 | Code        | 11 |         |    1 | 00/022D : A8          |             tay                  
-  251 |  1              scroll.asm     74 | Comment     | 11 |         |    0 | 00/022E               | ;-----------------------------------------------------------------------------
-  252 |  1              scroll.asm     75 | Empty       | 11 |         |    0 | 00/022E               |                                  
-  253 |  1              scroll.asm     76 | Code        | 11 |         |    1 | 00/022E : C8          |             iny                  
-  254 |  1              scroll.asm     77 | Code        | 11 |         |    1 | 00/022F : E8          |             inx                  
-  255 |  1              scroll.asm     78 | Code        | 11 |         |    1 | 00/0230 : E8          |             inx                  
-  256 |  1              scroll.asm     79 | Code        | 11 |         |    2 | 00/0231 : E0 15       |             cpx   #$15           ; beyond last segment
-  257 |  1              scroll.asm     80 | Code        | 11 |         |    2 | 00/0233 : D0 E4       |             bne   CHARLOOP       
-  258 |  1              scroll.asm     81 | Empty       | 11 |         |    0 | 00/0235               |                                  
-  259 |  1              scroll.asm     82 | Comment     | 11 |         |    0 | 00/0235               | ;-----------------------------------------------------------------------------
-  260 |  1              scroll.asm     83 | Comment     | 11 |         |    0 | 00/0235               | ; all segments done, check timer, and start again to refresh display
-  261 |  1              scroll.asm     84 | Comment     | 11 |         |    0 | 00/0235               | ;-----------------------------------------------------------------------------
-  262 |  1              scroll.asm     85 | Code        | 11 |         |    3 | 00/0235 : AD 07 17    |             LDA   $1707          ; check the timer
-  263 |  1              scroll.asm     86 | Code        | 11 |         |    2 | 00/0238 : F0 05       |             BEQ   DONE           
-  264 |  1              scroll.asm     87 | Code        | 11 |         |    3 | 00/023A : AD 06 17    |             LDA   $1706          ; restore divider etc (a read will accomplish this)
-  265 |  1              scroll.asm     88 | Code        | 11 |         |    2 | 00/023D : E6 00       |             INC   $00            ; increment index low byte
-  266 |  1              scroll.asm     89 | Comment     | 11 |         |    0 | 00/023F               |             ; TODO check for terminator
-  267 |  1              scroll.asm     90 | Empty       | 11 |         |    0 | 00/023F               |                                  
-  268 |  1              scroll.asm     91 | Code        | 11 |  2      |    3 | 00/023F : 4C 15 02    | DONE        jmp   DISPLOOP       ; refresh the display
-  269 |  1              scroll.asm     92 | Empty       | 11 |         |    0 | 00/0242               |                                  
-  270 |  1              scroll.asm     93 | Comment     | 11 |         |    0 | 00/0242               | ;-----------------------------------------------------------------------------
-  271 |  1              scroll.asm     94 | Comment     | 11 |         |    0 | 00/0242               | ; DECINDEX subroutine: decrement 16 bit variable INDEXL/INDEXH
-  272 |  1              scroll.asm     95 | Comment     | 11 |         |    0 | 00/0242               | ;-----------------------------------------------------------------------------
-  273 |  1              scroll.asm     96 | Code        | 11 |         |    2 | 00/0242 : A5 02       | DECINDEX    LDA   {$02}          ;Get index low byte
-  274 |  1              scroll.asm     97 | Code        | 11 |         |    2 | 00/0244 : D0 02       |             BNE   SKP_IDXH       ;Test for INDEXL = zero
-  275 |  1              scroll.asm     98 | Code        | 11 |         |    2 | 00/0246 : C6 03       |             DEC   {$02}+1        ;Decrement index high byte
-  276 |  1              scroll.asm     99 | Code        | 11 |         |    2 | 00/0248 : C6 02       | SKP_IDXH    DEC   {$02}          ;Decrement index low byte
-  277 |  1              scroll.asm    100 | Code        | 11 |         |    1 | 00/024A : 60          |             RTS                  ;Return to caller
-  278 |  1              scroll.asm    101 | Empty       | 11 |         |    0 | 00/024B               |                                  
-  279 |  1              scroll.asm    102 | Comment     | 11 |         |    0 | 00/024B               | ;-----------------------------------------------------------------------------
-  280 |  1              scroll.asm    103 | Comment     | 11 |         |    0 | 00/024B               | ; INCINDEX subroutine: increment 16 bit variable INDEXL/INDEXH
-  281 |  1              scroll.asm    104 | Comment     | 11 |         |    0 | 00/024B               | ;-----------------------------------------------------------------------------
-  282 |  1              scroll.asm    105 | Code        | 11 |         |    2 | 00/024B : E6 02       | INCINDEX    INC   {$02}          ;Increment index low byte
-  283 |  1              scroll.asm    106 | Code        | 11 |         |    2 | 00/024D : D0 02       |             BNE   SKP_IDX        ;If not zero, skip high byte
-  284 |  1              scroll.asm    107 | Code        | 11 |         |    2 | 00/024F : E6 03       |             INC   {$02}+1        ;Increment index high byte
-  285 |  1              scroll.asm    108 | Code        | 11 |         |    1 | 00/0251 : 60          | SKP_IDX     RTS                  ;Return to caller
-  286 |  1              scroll.asm    109 | Empty       | 11 |         |    0 | 00/0252               |                                  
-  287 |  1              scroll.asm    110 | Empty       | 11 |         |    0 | 00/0252               |                                  
-  288 |  1              scroll.asm    111 | Empty       | 11 |         |    0 | 00/0252               |                                  
-  289 |  1              scroll.asm    112 | Data        | 11 |         |   15 | 00/0252 : 76 79 38 38 | DATA        DB    {$76},{$79},{$38},{$38},{$3F},{$00},{$BD},{$38},{$F7},{$ED},{$ED},{$00},{$F8},{$F8},{$EE}
-      |                                   |             |    |         |      |           3F 00 BD 38 |
-      |                                   |             |    |         |      |           F7 ED ED 00 |
-      |                                   |             |    |         |      |           F8 F8 EE    |
-  290 |  1              scroll.asm    113 | Data        | 11 |         |    1 | 00/0261 : EA          |             DB    $EA            
-  291 |  1              scroll.asm    114 | Empty       | 11 |         |    0 | 00/0262               |                                  
-  292 |  1              scroll.asm    115 | Empty       | 11 |         |    0 | 00/0262               |                                  
+  237 |  1              scroll.asm     60 | Code        | 11 |  2      |    3 | 00/0221 : B9 4D 02    |             lda   DATA,y         
+  238 |  1              scroll.asm     61 | Code        | 11 |         |    2 | 00/0224 : C9 EA       |             cmp   #$EA           ; check for data terminator
+  239 |  1              scroll.asm     62 | Code        | 11 |         |    2 | 00/0226 : D0 07       |             bne   NOTERM         
+  240 |  1              scroll.asm     63 | Code        | 11 |         |    2 | 00/0228 : A9 00       |             LDA   #$00           ; no more data so reset ZP index
+  241 |  1              scroll.asm     64 | Code        | 11 |         |    2 | 00/022A : 85 00       |             STA   $00            
+  242 |  1              scroll.asm     65 | Code        | 11 |  2      |    3 | 00/022C : 4C 15 02    |             JMP   DISPLOOP       ; start again
+  243 |  1              scroll.asm     66 | Empty       | 11 |         |    0 | 00/022F               |                                  
+  244 |  1              scroll.asm     67 | Code        | 11 |         |    3 | 00/022F : 8D 40 17    | NOTERM      sta   {$1740}        
+  245 |  1              scroll.asm     68 | Empty       | 11 |         |    0 | 00/0232               |                                  
+  246 |  1              scroll.asm     69 | Comment     | 11 |         |    0 | 00/0232               | ;-----------------------------------------------------------------------------
+  247 |  1              scroll.asm     70 | Comment     | 11 |         |    0 | 00/0232               | ; delay to allow the leds to reach full brightness
+  248 |  1              scroll.asm     71 | Comment     | 11 |         |    0 | 00/0232               | ;-----------------------------------------------------------------------------
+  249 |  1              scroll.asm     72 | Code        | 11 |         |    1 | 00/0232 : 98          |             tya                  ; delay added to allow the led to fully light
+  250 |  1              scroll.asm     73 | Code        | 11 |         |    2 | 00/0233 : A0 04       |             ldy   #$04           ;   helps a little with the genuine KIM-1
+  251 |  1              scroll.asm     74 | Empty       | 11 |         |    0 | 00/0235               | CHARDELAY                        
+  252 |  1              scroll.asm     75 | Code        | 11 |         |    1 | 00/0235 : 88          |             dey                  
+  253 |  1              scroll.asm     76 | Code        | 11 |         |    2 | 00/0236 : D0 FD       |             bne   CHARDELAY      ; glow up character
+  254 |  1              scroll.asm     77 | Code        | 11 |         |    1 | 00/0238 : A8          |             tay                  
+  255 |  1              scroll.asm     78 | Comment     | 11 |         |    0 | 00/0239               | ;-----------------------------------------------------------------------------
+  256 |  1              scroll.asm     79 | Empty       | 11 |         |    0 | 00/0239               |                                  
+  257 |  1              scroll.asm     80 | Code        | 11 |         |    1 | 00/0239 : C8          |             iny                  
+  258 |  1              scroll.asm     81 | Code        | 11 |         |    1 | 00/023A : E8          |             inx                  
+  259 |  1              scroll.asm     82 | Code        | 11 |         |    1 | 00/023B : E8          |             inx                  
+  260 |  1              scroll.asm     83 | Code        | 11 |         |    2 | 00/023C : E0 15       |             cpx   #$15           ; beyond last segment
+  261 |  1              scroll.asm     84 | Code        | 11 |         |    2 | 00/023E : D0 D9       |             bne   CHARLOOP       
+  262 |  1              scroll.asm     85 | Empty       | 11 |         |    0 | 00/0240               |                                  
+  263 |  1              scroll.asm     86 | Comment     | 11 |         |    0 | 00/0240               | ;-----------------------------------------------------------------------------
+  264 |  1              scroll.asm     87 | Comment     | 11 |         |    0 | 00/0240               | ; all segments done, check timer, and start again to refresh display
+  265 |  1              scroll.asm     88 | Comment     | 11 |         |    0 | 00/0240               | ;-----------------------------------------------------------------------------
+  266 |  1              scroll.asm     89 | Code        | 11 |         |    3 | 00/0240 : AD 07 17    |             LDA   $1707          ; check the timer
+  267 |  1              scroll.asm     90 | Code        | 11 |         |    2 | 00/0243 : F0 05       |             BEQ   DONE           
+  268 |  1              scroll.asm     91 | Code        | 11 |         |    3 | 00/0245 : AD 06 17    |             LDA   $1706          ; restore divider etc (a read will accomplish this)
+  269 |  1              scroll.asm     92 | Code        | 11 |         |    2 | 00/0248 : E6 00       |             INC   $00            ; increment index low byte
+  270 |  1              scroll.asm     93 | Empty       | 11 |         |    0 | 00/024A               |                                  
+  271 |  1              scroll.asm     94 | Code        | 11 |  2      |    3 | 00/024A : 4C 15 02    | DONE        jmp   DISPLOOP       ; refresh the display
+  272 |  1              scroll.asm     95 | Empty       | 11 |         |    0 | 00/024D               |                                  
+  273 |  1              scroll.asm     96 | Empty       | 11 |         |    0 | 00/024D               |                                  
+  274 |  1              scroll.asm     97 | Data        | 11 |         |   20 | 00/024D : 00 00 00 00 | DATA        DB    {$00},{$00},{$00},{$00},{$00},{$76},{$79},{$38},{$38},{$3F},{$00},{$BD},{$38},{$F7},{$ED},{$ED},{$00},{$F8},{$F8},{$EE}
+      |                                   |             |    |         |      |           00 76 79 38 |
+      |                                   |             |    |         |      |           38 3F 00 BD |
+      |                                   |             |    |         |      |           38 F7 ED ED |
+      |                                   |             |    |         |      |           00 F8 F8 EE |
+  275 |  1              scroll.asm     98 | Data        | 11 |         |    1 | 00/0261 : EA          |             DB    $EA            
+  276 |  1              scroll.asm     99 | Empty       | 11 |         |    0 | 00/0262               |                                  
+  277 |  1              scroll.asm    100 | Empty       | 11 |         |    0 | 00/0262               |                                  
 ------+-----------------------------------+-------------+----+---------+------+-----------------------+-------------------------------------------------------------------

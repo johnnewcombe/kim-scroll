@@ -46,8 +46,8 @@
             lda #$00            ; store initial value for Y in zero page
             sta $00
 
-            LDA #$FF
-            STA $1707          ; set timer division
+            lda #$FF
+            sta $1707          ; set timer division
 
 DISPLOOP
             ldy $00             ; initialise character offset from Zero Page
@@ -57,10 +57,14 @@ CHARLOOP
             lda #$00
             sta SAD             ; do it this way
             stx SBD             ;   to remove flicker
-            ;lda (DATAINDEX),y
             lda DATA,y
-            sta SAD
+            cmp #$EA            ; check for data terminator
+            bne NOTERM
+            LDA #$00            ; no more data so reset ZP index
+            STA $00
+            JMP DISPLOOP        ; start again
 
+NOTERM      sta SAD
 
 ;-----------------------------------------------------------------------------
 ; delay to allow the leds to reach full brightness
@@ -86,29 +90,10 @@ CHARDELAY
             BEQ DONE
             LDA $1706           ; restore divider etc (a read will accomplish this)
             INC $00             ; increment index low byte
-            ; TODO check for terminator
 
 DONE        jmp DISPLOOP        ; refresh the display
 
-;-----------------------------------------------------------------------------
-; DECINDEX subroutine: decrement 16 bit variable INDEXL/INDEXH
-;-----------------------------------------------------------------------------
-DECINDEX        LDA     DATAINDEX       ;Get index low byte
-                BNE     SKP_IDXH        ;Test for INDEXL = zero
-                DEC     DATAINDEX+1     ;Decrement index high byte
-SKP_IDXH        DEC     DATAINDEX       ;Decrement index low byte
-                RTS                     ;Return to caller
 
-;-----------------------------------------------------------------------------
-; INCINDEX subroutine: increment 16 bit variable INDEXL/INDEXH
-;-----------------------------------------------------------------------------
-INCINDEX        INC     DATAINDEX       ;Increment index low byte
-                BNE     SKP_IDX         ;If not zero, skip high byte
-                INC     DATAINDEX+1     ;Increment index high byte
-SKP_IDX         RTS                     ;Return to caller
-
-
-
-DATA        DB LH, LE, LL, LL, LO, LSPC, LG, LL, LA, LS, LS, LSPC, Lt, Lt, LY
+DATA        DB LSPC, LSPC, LSPC, LSPC, LSPC, LH, LE, LL, LL, LO, LSPC, LG, LL, LA, LS, LS, LSPC, Lt, Lt, LY
             DB $EA
 
