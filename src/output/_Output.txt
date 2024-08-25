@@ -166,7 +166,7 @@
   163 |  2 include/kim-symbols.asm    140 | Equivalence | 11 |         |    0 | 00/0200               | Lo          EQU   $DC            
   164 |  2 include/kim-symbols.asm    141 | Equivalence | 11 |         |    0 | 00/0200               | Lp          EQU   $F3            
   165 |  2 include/kim-symbols.asm    142 | Comment     | 11 |         |    0 | 00/0200               | ; Lq
-  166 |  2 include/kim-symbols.asm    143 | Equivalence | 11 |         |    0 | 00/0200               | Lr          EQU   $DO            
+  166 |  2 include/kim-symbols.asm    143 | Equivalence | 11 |         |    0 | 00/0200               | Lr          EQU   $D0            
   167 |  2 include/kim-symbols.asm    144 | Comment     | 11 |         |    0 | 00/0200               | ; Ls
   168 |  2 include/kim-symbols.asm    145 | Equivalence | 11 |         |    0 | 00/0200               | Lt          EQU   $F8            
   169 |  2 include/kim-symbols.asm    146 | Equivalence | 11 |         |    0 | 00/0200               | Lu          EQU   $9C            
@@ -274,12 +274,19 @@
   271 |  1              scroll.asm     94 | Code        | 11 |  2      |    3 | 00/024A : 4C 15 02    | DONE        jmp   DISPLOOP       ; refresh the display
   272 |  1              scroll.asm     95 | Empty       | 11 |         |    0 | 00/024D               |                                  
   273 |  1              scroll.asm     96 | Empty       | 11 |         |    0 | 00/024D               |                                  
-  274 |  1              scroll.asm     97 | Data        | 11 |         |   20 | 00/024D : 00 00 00 00 | DATA        DB    {$00},{$00},{$00},{$00},{$00},{$76},{$79},{$38},{$38},{$3F},{$00},{$BD},{$38},{$F7},{$ED},{$ED},{$00},{$F8},{$F8},{$EE}
-      |                                   |             |    |         |      |           00 76 79 38 |
-      |                                   |             |    |         |      |           38 3F 00 BD |
-      |                                   |             |    |         |      |           38 F7 ED ED |
-      |                                   |             |    |         |      |           00 F8 F8 EE |
-  275 |  1              scroll.asm     98 | Data        | 11 |         |    1 | 00/0261 : EA          |             DB    $EA            
-  276 |  1              scroll.asm     99 | Empty       | 11 |         |    0 | 00/0262               |                                  
-  277 |  1              scroll.asm    100 | Empty       | 11 |         |    0 | 00/0262               |                                  
+  274 |  1              scroll.asm     97 | Empty       | 11 |         |    0 | 00/024D               | DATA                             
+  275 |  1              scroll.asm     98 | Data        | 11 |         |   19 | 00/024D : 00 00 00 00 |             DB    {$00},{$00},{$00},{$00},{$00},{$D0},{$79},{$F8},{$3F},{$40},{$F1},{$79},{$ED},{$F8},{$00},{$DB},{$BF},{$DB},{$E6}
+      |                                   |             |    |         |      |           00 D0 79 F8 |
+      |                                   |             |    |         |      |           3F 40 F1 79 |
+      |                                   |             |    |         |      |           ED F8 00 DB |
+      |                                   |             |    |         |      |           BF DB E6    |
+  276 |  1              scroll.asm     99 | Data        | 11 |         |   15 | 00/0260 : 00 00 00 00 |             DB    {$00},{$00},{$00},{$00},{$00},{$00},{$BD},{$38},{$F7},{$ED},{$ED},{$40},{$F8},{$F8},{$EE},
+      |                                   |             |    |         |      |           00 00 BD 38 |
+      |                                   |             |    |         |      |           F7 ED ED 40 |
+      |                                   |             |    |         |      |           F8 F8 EE    |
+  277 |  1              scroll.asm    100 | Data        | 11 |         |    6 | 00/026F : 00 00 00 00 |             DB    {$00},{$00},{$00},{$00},{$00},{$00}
+      |                                   |             |    |         |      |           00 00       |
+  278 |  1              scroll.asm    101 | Data        | 11 |         |    1 | 00/0275 : EA          |             DB    $EA            
+  279 |  1              scroll.asm    102 | Empty       | 11 |         |    0 | 00/0276               |                                  
+  280 |  1              scroll.asm    103 | Empty       | 11 |         |    0 | 00/0276               |                                  
 ------+-----------------------------------+-------------+----+---------+------+-----------------------+-------------------------------------------------------------------

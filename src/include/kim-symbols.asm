@@ -140,7 +140,7 @@ Ln EQU $D4
 Lo EQU $DC
 Lp EQU $F3
 ; Lq
-Lr EQU $DO
+Lr EQU $D0
 ; Ls
 Lt EQU $F8
 Lu EQU $9C

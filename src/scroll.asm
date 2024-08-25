@@ -94,6 +94,9 @@ CHARDELAY
 DONE        jmp DISPLOOP        ; refresh the display
 
 
-DATA        DB LSPC, LSPC, LSPC, LSPC, LSPC, LH, LE, LL, LL, LO, LSPC, LG, LL, LA, LS, LS, LSPC, Lt, Lt, LY
+DATA
+            DB LSPC,LSPC,LSPC,LSPC,LSPC,Lr,LE,Lt,LO,LDASH,LF,LE,LS,Lt,LSPC,L2,L0,L2,L4
+            DB LSPC,LSPC,LSPC,LSPC,LSPC,LSPC,LG,LL,LA,LS,LS,LDASH,Lt,Lt,LY,
+            DB LSPC,LSPC,LSPC,LSPC,LSPC,LSPC
             DB $EA
 
