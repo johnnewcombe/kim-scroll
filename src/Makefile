@@ -2,7 +2,7 @@
 	# https://arcade.vastheman.com/minimaws/machine/acrnsys3
 
 build:
-	merlin32 -v ./linkscript.asm
+	../tools/merlin32 -v ./linkscript.asm
 
 	mv ./scroll ./output
 	mv ./_Output.txt ./output
@@ -12,9 +12,9 @@ build:
 	ls -lA ./output/
 	# --------------------------------------------------------------------
 
-	kim-util bin2paper -i ./output/scroll -o ./output/scroll-paper.txt
-	kim-util bin2keys -i ./output/scroll -o ./output/scroll-keys.txt
-	kim-util bin2dcb -i ./output/scroll -o ./output/scroll-dcb.txt
+	../tools/kim-util-linux-amd64 bin2paper -i ./output/scroll -o ./output/scroll-paper.txt -a 0200
+	../tools/kim-util-linux-amd64 bin2keys -i ./output/scroll -o ./output/scroll-keys.txt -a 0200
+	../tools/kim-util-linux-amd64 bin2dcb -i ./output/scroll -o ./output/scroll-dcb.txt
 
 test:build
 	# https://arcade.vastheman.com/minimaws/machine/kim1

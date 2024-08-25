@@ -1,335 +1,240 @@
-------+-----------------------------------+-------------+----+---------+------+-----------------------+-------------------------------------------------------------------
- Line | # File                       Line | Line Type   | MX |  Reloc  | Size | Address   Object Code |  Source Code                                                      
-------+-----------------------------------+-------------+----+---------+------+-----------------------+-------------------------------------------------------------------
+------+-----------------------------------+-------------+----+---------+------+-----------------------+----------------------------------------------------------------------
+ Line | # File                       Line | Line Type   | MX |  Reloc  | Size | Address   Object Code |  Source Code
+------+-----------------------------------+-------------+----+---------+------+-----------------------+----------------------------------------------------------------------
     1 |  1              scroll.asm      1 | Comment     | 11 |         |    0 | 00/0200               | ;=============================================================================
     2 |  1              scroll.asm      2 | Comment     | 11 |         |    0 | 00/0200               | ; Display Example (c) J.L.Newcombe 2024 (mostly)
     3 |  1              scroll.asm      3 | Comment     | 11 |         |    0 | 00/0200               | ;
-    4 |  1              scroll.asm      4 | Comment     | 11 |         |    0 | 00/0200               | ; Licence:
-    5 |  1              scroll.asm      5 | Comment     | 11 |         |    0 | 00/0200               | ;       None
+    4 |  1              scroll.asm      4 | Comment     | 11 |         |    0 | 00/0200               | ; Based on examples by Aart Bik
+    5 |  1              scroll.asm      5 | Comment     | 11 |         |    0 | 00/0200               | ;      https://github.com/maksimKorzh/KIM-1/blob/main/software/Hello/hello.asm
     6 |  1              scroll.asm      6 | Comment     | 11 |         |    0 | 00/0200               | ;
-    7 |  1              scroll.asm      7 | Comment     | 11 |         |    0 | 00/0200               | ; Assembler:
-    8 |  1              scroll.asm      8 | Comment     | 11 |         |    0 | 00/0200               | ;       Merlin32 compiler by Brutal Delux
-    9 |  1              scroll.asm      9 | Comment     | 11 |         |    0 | 00/0200               | ;       https://www.brutaldeluxe.fr/products/crossdevtools/merlin/index.html
-   10 |  1              scroll.asm     10 | Comment     | 11 |         |    0 | 00/0200               | ;
-   11 |  1              scroll.asm     11 | Comment     | 11 |         |    0 | 00/0200               | ;-----------------------------------------------------------------------------
-   12 |  1              scroll.asm     12 | Comment     | 11 |         |    0 | 00/0200               | ; Date          Comment
-   13 |  1              scroll.asm     13 | Comment     | 11 |         |    0 | 00/0200               | ;-----------------------------------------------------------------------------
-   14 |  1              scroll.asm     14 | Comment     | 11 |         |    0 | 00/0200               | ; 10.02.2024    Created for the Merlin32 compiler by Brutal Delux
-   15 |  1              scroll.asm     15 | Comment     | 11 |         |    0 | 00/0200               | ;
-   16 |  1              scroll.asm     16 | Comment     | 11 |         |    0 | 00/0200               | ;
-   17 |  1              scroll.asm     17 | Comment     | 11 |         |    0 | 00/0200               | ;=============================================================================
-   18 |  1              scroll.asm     18 | Empty       | 11 |         |    0 | 00/0200               |                                  
-   19 |  1              scroll.asm     19 | Directive   | 11 |         |    0 | 00/0200               |             PUT   include/kim-symbols.asm
-   20 |  2 include/kim-symbols.asm      1 | Empty       | 11 |         |    0 | 00/0200               |                                  
-   21 |  2 include/kim-symbols.asm      2 | Comment     | 11 |         |    0 | 00/0200               | ;        ROM ROUTINES
-   22 |  2 include/kim-symbols.asm      3 | Empty       | 11 |         |    0 | 00/0200               |                                  
-   23 |  2 include/kim-symbols.asm      4 | Equivalence | 11 |         |    0 | 00/0200               | AK          EQU   $1EFE          ; Check for key depressed. A non-zero: no key down. A equal 0, key down.
-   24 |  2 include/kim-symbols.asm      5 | Equivalence | 11 |         |    0 | 00/0200               | SCAND       EQU   $1F19          ; Display address and contents.
-   25 |  2 include/kim-symbols.asm      6 | Equivalence | 11 |         |    0 | 00/0200               | SCANDS      EQU   $1F1F          ; Output six hex characters on display. Stored in $00F9, $00FA, $00FB.
-   26 |  2 include/kim-symbols.asm      7 | Equivalence | 11 |         |    0 | 00/0200               | CONVD       EQU   $1F48          ; Output HEX digit
-   27 |  2 include/kim-symbols.asm      8 | Equivalence | 11 |         |    0 | 00/0200               | OUTPUT      EQU   $1F4E          ; Output 7 segment code stored in A register (to lit up a custom segment)
-   28 |  2 include/kim-symbols.asm      9 | Equivalence | 11 |         |    0 | 00/0200               | KEYIN       EQU   $1F40          ; Open up keyboard channel. Call before using GETKEY (or call SCANDS).
-   29 |  2 include/kim-symbols.asm     10 | Equivalence | 11 |         |    0 | 00/0200               | INCPT       EQU   $1F63          ; Increment display address.
-   30 |  2 include/kim-symbols.asm     11 | Equivalence | 11 |         |    0 | 00/0200               | GETKEY      EQU   $1F6A          ; Return key from keyboard. Value 0-F, 10(AD), 11(DA), 12(+), 13(GO), 14(PC), 15 (no keypress).
-   31 |  2 include/kim-symbols.asm     12 | Equivalence | 11 |         |    0 | 00/0200               | TABLE       EQU   $1FE7          ; Table of 7-segment patterns.
-   32 |  2 include/kim-symbols.asm     13 | Equivalence | 11 |         |    0 | 00/0200               | SAVE        EQU   $1C00          ; Normal interrupt entry point.
-   33 |  2 include/kim-symbols.asm     14 | Equivalence | 11 |         |    0 | 00/0200               | RST         EQU   $1C22          ; Reset return to monitor.
-   34 |  2 include/kim-symbols.asm     15 | Equivalence | 11 |         |    0 | 00/0200               | START       EQU   $1C4F          ; Return to monitor entry
-   35 |  2 include/kim-symbols.asm     16 | Empty       | 11 |         |    0 | 00/0200               |                                  
-   36 |  2 include/kim-symbols.asm     17 | Comment     | 11 |         |    0 | 00/0200               | ; IO
-   37 |  2 include/kim-symbols.asm     18 | Empty       | 11 |         |    0 | 00/0200               |                                  
-   38 |  2 include/kim-symbols.asm     19 | Equivalence | 11 |         |    0 | 00/0200               | SAD         EQU   $1740          ; 6530 A DATA
-   39 |  2 include/kim-symbols.asm     20 | Equivalence | 11 |         |    0 | 00/0200               | PADD        EQU   $1741          ; 6530 A DATA DIRECTION
-   40 |  2 include/kim-symbols.asm     21 | Equivalence | 11 |         |    0 | 00/0200               | SBD         EQU   $1742          ; 6530 B DATA
-   41 |  2 include/kim-symbols.asm     22 | Equivalence | 11 |         |    0 | 00/0200               | PBDD        EQU   $1743          ; 6530 B DATA DIRECTION
-   42 |  2 include/kim-symbols.asm     23 | Equivalence | 11 |         |    0 | 00/0200               | CLK1T       EQU   $1744          ; DIV BY 1 TIME
-   43 |  2 include/kim-symbols.asm     24 | Equivalence | 11 |         |    0 | 00/0200               | CLK8T       EQU   $1745          ; DIV BY 8 TIME
-   44 |  2 include/kim-symbols.asm     25 | Equivalence | 11 |         |    0 | 00/0200               | CLK64T      EQU   $1746          ; DIV BY 64 TIME
-   45 |  2 include/kim-symbols.asm     26 | Equivalence | 11 |         |    0 | 00/0200               | CLKKT       EQU   $1747          ; DIV BY 1024 TIME
-   46 |  2 include/kim-symbols.asm     27 | Equivalence | 11 |         |    0 | 00/0200               | CLKRDI      EQU   $1747          ; READ TIME OUT BIT
-   47 |  2 include/kim-symbols.asm     28 | Equivalence | 11 |         |    0 | 00/0200               | CLKRDT      EQU   $1746          ; READ TIME
-   48 |  2 include/kim-symbols.asm     29 | Empty       | 11 |         |    0 | 00/0200               |                                  
-   49 |  2 include/kim-symbols.asm     30 | Comment     | 11 |         |    0 | 00/0200               | ;       MPU REG.  SAVX AREA IN PAGE 0
-   50 |  2 include/kim-symbols.asm     31 | Empty       | 11 |         |    0 | 00/0200               |                                  
-   51 |  2 include/kim-symbols.asm     32 | Equivalence | 11 |         |    0 | 00/0200               | PCL         EQU   $EF            ; PROGRAM CNT LOW
-   52 |  2 include/kim-symbols.asm     33 | Equivalence | 11 |         |    0 | 00/0200               | PCH         EQU   $F0            ; PROGRAM CNT HI
-   53 |  2 include/kim-symbols.asm     34 | Equivalence | 11 |         |    0 | 00/0200               | PREG        EQU   $F1            ; CURRENT STATUS REG
-   54 |  2 include/kim-symbols.asm     35 | Equivalence | 11 |         |    0 | 00/0200               | SPUSER      EQU   $F2            ; CURRENT STACK POINTER
-   55 |  2 include/kim-symbols.asm     36 | Equivalence | 11 |         |    0 | 00/0200               | ACC         EQU   $F3            ; ACCUMULATOR
-   56 |  2 include/kim-symbols.asm     37 | Equivalence | 11 |         |    0 | 00/0200               | YREG        EQU   $F4            ; Y INDEX
-   57 |  2 include/kim-symbols.asm     38 | Equivalence | 11 |         |    0 | 00/0200               | XREG        EQU   $F5            ; X INDEX
-   58 |  2 include/kim-symbols.asm     39 | Empty       | 11 |         |    0 | 00/0200               |                                  
-   59 |  2 include/kim-symbols.asm     40 | Comment     | 11 |         |    0 | 00/0200               | ;       KIM FIXED AREA IN PAGE 0
-   60 |  2 include/kim-symbols.asm     41 | Empty       | 11 |         |    0 | 00/0200               |                                  
-   61 |  2 include/kim-symbols.asm     42 | Equivalence | 11 |         |    0 | 00/0200               | CHKHI       EQU   $F6            
-   62 |  2 include/kim-symbols.asm     43 | Equivalence | 11 |         |    0 | 00/0200               | CHKSUM      EQU   $F7            
-   63 |  2 include/kim-symbols.asm     44 | Equivalence | 11 |         |    0 | 00/0200               | INL         EQU   $F8            ; INPUT BUFFER
-   64 |  2 include/kim-symbols.asm     45 | Equivalence | 11 |         |    0 | 00/0200               | INH         EQU   $F9            ; INPUT BUFFER
-   65 |  2 include/kim-symbols.asm     46 | Equivalence | 11 |         |    0 | 00/0200               | POINTL      EQU   $FA            ; LSB OF OPEN CELL
-   66 |  2 include/kim-symbols.asm     47 | Equivalence | 11 |         |    0 | 00/0200               | POINTH      EQU   $FB            ; MSB OF OPEN CELL
-   67 |  2 include/kim-symbols.asm     48 | Equivalence | 11 |         |    0 | 00/0200               | TEMP        EQU   $FC            
-   68 |  2 include/kim-symbols.asm     49 | Equivalence | 11 |         |    0 | 00/0200               | TMPX        EQU   $FD            
-   69 |  2 include/kim-symbols.asm     50 | Equivalence | 11 |         |    0 | 00/0200               | CHAR        EQU   $FE            
-   70 |  2 include/kim-symbols.asm     51 | Equivalence | 11 |         |    0 | 00/0200               | MODE        EQU   $FF            
-   71 |  2 include/kim-symbols.asm     52 | Empty       | 11 |         |    0 | 00/0200               |                                  
-   72 |  2 include/kim-symbols.asm     53 | Comment     | 11 |         |    0 | 00/0200               | ;       KIM FIXED AREA IN PAGE 23
-   73 |  2 include/kim-symbols.asm     54 | Empty       | 11 |         |    0 | 00/0200               |                                  
-   74 |  2 include/kim-symbols.asm     55 | Equivalence | 11 |         |    0 | 00/0200               | CHKL        EQU   $17E7          
-   75 |  2 include/kim-symbols.asm     56 | Equivalence | 11 |         |    0 | 00/0200               | CHKH        EQU   $17E8          ; CHKSUM
-   76 |  2 include/kim-symbols.asm     57 | Equivalence | 11 |         |    0 | 00/0200               | SAVX        EQU   $17E9          
-   77 |  2 include/kim-symbols.asm     58 | Equivalence | 11 |         |    0 | 00/0200               | VEB         EQU   $17EC          ; VOLATILE EXECUTION BLOCK
-   78 |  2 include/kim-symbols.asm     59 | Equivalence | 11 |         |    0 | 00/0200               | CNTL30      EQU   $17F2          ; TTY DELAY
-   79 |  2 include/kim-symbols.asm     60 | Equivalence | 11 |         |    0 | 00/0200               | CNTH30      EQU   $17F3          ; TTY DELAY
-   80 |  2 include/kim-symbols.asm     61 | Equivalence | 11 |         |    0 | 00/0200               | TIMH        EQU   $7F4           
-   81 |  2 include/kim-symbols.asm     62 | Equivalence | 11 |         |    0 | 00/0200               | SAL         EQU   $17F5          ; LOW STARTING ADDRESS
-   82 |  2 include/kim-symbols.asm     63 | Equivalence | 11 |         |    0 | 00/0200               | SAH         EQU   $17F6          ; HI STARTING ADDRESS
-   83 |  2 include/kim-symbols.asm     64 | Equivalence | 11 |         |    0 | 00/0200               | EAL         EQU   $17F7          ; LOW ENDING ADDRESS;
-   84 |  2 include/kim-symbols.asm     65 | Equivalence | 11 |         |    0 | 00/0200               | EAH         EQU   $17F8          ; HI ENDING ADDRESS
-   85 |  2 include/kim-symbols.asm     66 | Equivalence | 11 |         |    0 | 00/0200               | ID          EQU   $17F9          ; TAPE PROGRAM ID NUMBER
-   86 |  2 include/kim-symbols.asm     67 | Empty       | 11 |         |    0 | 00/0200               |                                  
-   87 |  2 include/kim-symbols.asm     68 | Comment     | 11 |         |    0 | 00/0200               | ;       INTERRUPT VECTORS
-   88 |  2 include/kim-symbols.asm     69 | Empty       | 11 |         |    0 | 00/0200               |                                  
-   89 |  2 include/kim-symbols.asm     70 | Equivalence | 11 |         |    0 | 00/0200               | NMIV        EQU   $17FA          ; STOP VECTOR (STOP=1C00)
-   90 |  2 include/kim-symbols.asm     71 | Equivalence | 11 |         |    0 | 00/0200               | RSTV        EQU   $17FC          ; RST VECTOR
-   91 |  2 include/kim-symbols.asm     72 | Equivalence | 11 |         |    0 | 00/0200               | IRQV        EQU   $17FE          ; IRQ VECTOR (BRK= 1C00)
-   92 |  2 include/kim-symbols.asm     73 | Empty       | 11 |         |    0 | 00/0200               |                                  
-   93 |  2 include/kim-symbols.asm     74 | Comment     | 11 |         |    0 | 00/0200               | ;       SEVEN SEGMENT DISPLAYS
-   94 |  2 include/kim-symbols.asm     75 | Empty       | 11 |         |    0 | 00/0200               |                                  
-   95 |  2 include/kim-symbols.asm     76 | Equivalence | 11 |         |    0 | 00/0200               | SEG-1       EQU   $09            
-   96 |  2 include/kim-symbols.asm     77 | Equivalence | 11 |         |    0 | 00/0200               | SEG-2       EQU   $0B            
-   97 |  2 include/kim-symbols.asm     78 | Equivalence | 11 |         |    0 | 00/0200               | SEG-3       EQU   $0D            
-   98 |  2 include/kim-symbols.asm     79 | Equivalence | 11 |         |    0 | 00/0200               | SEG-4       EQU   $0F            
-   99 |  2 include/kim-symbols.asm     80 | Equivalence | 11 |         |    0 | 00/0200               | SEG-5       EQU   $11            
-  100 |  2 include/kim-symbols.asm     81 | Equivalence | 11 |         |    0 | 00/0200               | SEG-6       EQU   $13            
-  101 |  2 include/kim-symbols.asm     82 | Empty       | 11 |         |    0 | 00/0200               |                                  
-  102 |  2 include/kim-symbols.asm     83 | Comment     | 11 |         |    0 | 00/0200               | ;       SEGMENT LED LETTERS
-  103 |  2 include/kim-symbols.asm     84 | Empty       | 11 |         |    0 | 00/0200               |                                  
-  104 |  2 include/kim-symbols.asm     85 | Comment     | 11 |         |    0 | 00/0200               | ; Relationship between bit and segment
-  105 |  2 include/kim-symbols.asm     86 | Comment     | 11 |         |    0 | 00/0200               | ;
-  106 |  2 include/kim-symbols.asm     87 | Comment     | 11 |         |    0 | 00/0200               | ;  | -0- |
-  107 |  2 include/kim-symbols.asm     88 | Comment     | 11 |         |    0 | 00/0200               | ;  5     1
-  108 |  2 include/kim-symbols.asm     89 | Comment     | 11 |         |    0 | 00/0200               | ;  | -6- |
-  109 |  2 include/kim-symbols.asm     90 | Comment     | 11 |         |    0 | 00/0200               | ;  4     2
-  110 |  2 include/kim-symbols.asm     91 | Comment     | 11 |         |    0 | 00/0200               | ;  | -3- |
-  111 |  2 include/kim-symbols.asm     92 | Empty       | 11 |         |    0 | 00/0200               |                                  
-  112 |  2 include/kim-symbols.asm     93 | Comment     | 11 |         |    0 | 00/0200               | ; e.g. a lower case 'd' would include bits 1,2,3,4,6 = 1101 1110 = $5E
-  113 |  2 include/kim-symbols.asm     94 | Empty       | 11 |         |    0 | 00/0200               |                                  
-  114 |  2 include/kim-symbols.asm     95 | Comment     | 11 |         |    0 | 00/0200               | ; Upper Case Letters
-  115 |  2 include/kim-symbols.asm     96 | Empty       | 11 |         |    0 | 00/0200               |                                  
-  116 |  2 include/kim-symbols.asm     97 | Equivalence | 11 |         |    0 | 00/0200               | LA          EQU   $F7            
-  117 |  2 include/kim-symbols.asm     98 | Equivalence | 11 |         |    0 | 00/0200               | LB          EQU   $FF            
-  118 |  2 include/kim-symbols.asm     99 | Equivalence | 11 |         |    0 | 00/0200               | LC          EQU   $B9            
-  119 |  2 include/kim-symbols.asm    100 | Equivalence | 11 |         |    0 | 00/0200               | LD          EQU   $BF            
-  120 |  2 include/kim-symbols.asm    101 | Equivalence | 11 |         |    0 | 00/0200               | LE          EQU   $F9            
-  121 |  2 include/kim-symbols.asm    102 | Equivalence | 11 |         |    0 | 00/0200               | LF          EQU   $F1            
-  122 |  2 include/kim-symbols.asm    103 | Equivalence | 11 |         |    0 | 00/0200               | LG          EQU   $BD            
-  123 |  2 include/kim-symbols.asm    104 | Equivalence | 11 |         |    0 | 00/0200               | LH          EQU   $F6            
-  124 |  2 include/kim-symbols.asm    105 | Equivalence | 11 |         |    0 | 00/0200               | LI          EQU   $86            
-  125 |  2 include/kim-symbols.asm    106 | Equivalence | 11 |         |    0 | 00/0200               | LJ          EQU   $9E            
-  126 |  2 include/kim-symbols.asm    107 | Comment     | 11 |         |    0 | 00/0200               | ; LK
-  127 |  2 include/kim-symbols.asm    108 | Equivalence | 11 |         |    0 | 00/0200               | LL          EQU   $B8            
-  128 |  2 include/kim-symbols.asm    109 | Comment     | 11 |         |    0 | 00/0200               | ; LL
-  129 |  2 include/kim-symbols.asm    110 | Comment     | 11 |         |    0 | 00/0200               | ; LM
-  130 |  2 include/kim-symbols.asm    111 | Equivalence | 11 |         |    0 | 00/0200               | LO          EQU   $BF            
-  131 |  2 include/kim-symbols.asm    112 | Equivalence | 11 |         |    0 | 00/0200               | LP          EQU   $F3            
-  132 |  2 include/kim-symbols.asm    113 | Comment     | 11 |         |    0 | 00/0200               | ; LQ
-  133 |  2 include/kim-symbols.asm    114 | Comment     | 11 |         |    0 | 00/0200               | ; DEG-R
-  134 |  2 include/kim-symbols.asm    115 | Equivalence | 11 |         |    0 | 00/0200               | LS          EQU   $ED            
-  135 |  2 include/kim-symbols.asm    116 | Comment     | 11 |         |    0 | 00/0200               | ; LT
-  136 |  2 include/kim-symbols.asm    117 | Equivalence | 11 |         |    0 | 00/0200               | LU          EQU   $BE            
-  137 |  2 include/kim-symbols.asm    118 | Comment     | 11 |         |    0 | 00/0200               | ; LV
-  138 |  2 include/kim-symbols.asm    119 | Comment     | 11 |         |    0 | 00/0200               | ; LW
-  139 |  2 include/kim-symbols.asm    120 | Comment     | 11 |         |    0 | 00/0200               | ; LX
-  140 |  2 include/kim-symbols.asm    121 | Equivalence | 11 |         |    0 | 00/0200               | LY          EQU   $EE            
-  141 |  2 include/kim-symbols.asm    122 | Comment     | 11 |         |    0 | 00/0200               | ; LZ
-  142 |  2 include/kim-symbols.asm    123 | Empty       | 11 |         |    0 | 00/0200               |                                  
-  143 |  2 include/kim-symbols.asm    124 | Comment     | 11 |         |    0 | 00/0200               | ; Lower Case Letters
-  144 |  2 include/kim-symbols.asm    125 | Empty       | 11 |         |    0 | 00/0200               |                                  
-  145 |  2 include/kim-symbols.asm    126 | Equivalence | 11 |         |    0 | 00/0200               | La          EQU   $DE            
-  146 |  2 include/kim-symbols.asm    127 | Equivalence | 11 |         |    0 | 00/0200               | Lb          EQU   $FC            
-  147 |  2 include/kim-symbols.asm    128 | Equivalence | 11 |         |    0 | 00/0200               | Lc          EQU   $D8            
-  148 |  2 include/kim-symbols.asm    129 | Equivalence | 11 |         |    0 | 00/0200               | Ld          EQU   $DE            
-  149 |  2 include/kim-symbols.asm    130 | Comment     | 11 |         |    0 | 00/0200               | ; Le
-  150 |  2 include/kim-symbols.asm    131 | Equivalence | 11 |         |    0 | 00/0200               | Lf          EQU   $F1            
-  151 |  2 include/kim-symbols.asm    132 | Equivalence | 11 |         |    0 | 00/0200               | Lg          EQU   $EF            
-  152 |  2 include/kim-symbols.asm    133 | Equivalence | 11 |         |    0 | 00/0200               | Lh          EQU   $F4            
-  153 |  2 include/kim-symbols.asm    134 | Equivalence | 11 |         |    0 | 00/0200               | Li          EQU   $84            
-  154 |  2 include/kim-symbols.asm    135 | Comment     | 11 |         |    0 | 00/0200               | ; Lj
-  155 |  2 include/kim-symbols.asm    136 | Comment     | 11 |         |    0 | 00/0200               | ; Lk
-  156 |  2 include/kim-symbols.asm    137 | Equivalence | 11 |         |    0 | 00/0200               | Ll          EQU   $86            
-  157 |  2 include/kim-symbols.asm    138 | Comment     | 11 |         |    0 | 00/0200               | ; Lm
-  158 |  2 include/kim-symbols.asm    139 | Equivalence | 11 |         |    0 | 00/0200               | Ln          EQU   $D4            
-  159 |  2 include/kim-symbols.asm    140 | Equivalence | 11 |         |    0 | 00/0200               | Lo          EQU   $DC            
-  160 |  2 include/kim-symbols.asm    141 | Equivalence | 11 |         |    0 | 00/0200               | Lp          EQU   $F3            
-  161 |  2 include/kim-symbols.asm    142 | Comment     | 11 |         |    0 | 00/0200               | ; Lq
-  162 |  2 include/kim-symbols.asm    143 | Equivalence | 11 |         |    0 | 00/0200               | Lr          EQU   $DO            
-  163 |  2 include/kim-symbols.asm    144 | Comment     | 11 |         |    0 | 00/0200               | ; Ls
-  164 |  2 include/kim-symbols.asm    145 | Equivalence | 11 |         |    0 | 00/0200               | Lt          EQU   $F8            
-  165 |  2 include/kim-symbols.asm    146 | Equivalence | 11 |         |    0 | 00/0200               | Lu          EQU   $9C            
-  166 |  2 include/kim-symbols.asm    147 | Comment     | 11 |         |    0 | 00/0200               | ; Lv
-  167 |  2 include/kim-symbols.asm    148 | Comment     | 11 |         |    0 | 00/0200               | ; Lw
-  168 |  2 include/kim-symbols.asm    149 | Comment     | 11 |         |    0 | 00/0200               | ; Lx
-  169 |  2 include/kim-symbols.asm    150 | Equivalence | 11 |         |    0 | 00/0200               | Ly          EQU   $EE            
-  170 |  2 include/kim-symbols.asm    151 | Comment     | 11 |         |    0 | 00/0200               | ; Lz
-  171 |  2 include/kim-symbols.asm    152 | Empty       | 11 |         |    0 | 00/0200               |                                  
-  172 |  2 include/kim-symbols.asm    153 | Equivalence | 11 |         |    0 | 00/0200               | L1          EQU   $86            
-  173 |  2 include/kim-symbols.asm    154 | Equivalence | 11 |         |    0 | 00/0200               | L2          EQU   $DB            
-  174 |  2 include/kim-symbols.asm    155 | Equivalence | 11 |         |    0 | 00/0200               | L3          EQU   $CF            
-  175 |  2 include/kim-symbols.asm    156 | Equivalence | 11 |         |    0 | 00/0200               | L4          EQU   $E6            
-  176 |  2 include/kim-symbols.asm    157 | Equivalence | 11 |         |    0 | 00/0200               | L5          EQU   $ED            
-  177 |  2 include/kim-symbols.asm    158 | Equivalence | 11 |         |    0 | 00/0200               | L6          EQU   $FD            
-  178 |  2 include/kim-symbols.asm    159 | Equivalence | 11 |         |    0 | 00/0200               | L7          EQU   $87            
-  179 |  2 include/kim-symbols.asm    160 | Equivalence | 11 |         |    0 | 00/0200               | L8          EQU   $FF            
-  180 |  2 include/kim-symbols.asm    161 | Equivalence | 11 |         |    0 | 00/0200               | L9          EQU   $EF            
-  181 |  2 include/kim-symbols.asm    162 | Equivalence | 11 |         |    0 | 00/0200               | L0          EQU   $BF            
-  182 |  2 include/kim-symbols.asm    163 | Empty       | 11 |         |    0 | 00/0200               |                                  
-  183 |  2 include/kim-symbols.asm    164 | Equivalence | 11 |         |    0 | 00/0200               | LSPC        EQU   $00            
-  184 |  2 include/kim-symbols.asm    165 | Equivalence | 11 |         |    0 | 00/0200               | LDASH       EQU   $C0            
-  185 |  2 include/kim-symbols.asm    166 | Empty       | 11 |         |    0 | 00/0200               |                                  
-  186 |  2 include/kim-symbols.asm    167 | Empty       | 11 |         |    0 | 00/0200               |                                  
-  187 |  2 include/kim-symbols.asm    168 | Empty       | 11 |         |    0 | 00/0200               |                                  
-  188 |  1              scroll.asm     20 | Directive   | 11 |         |    0 | 00/0200               |             PUT   include/defs.asm
-  189 |  3        include/defs.asm      1 | Comment     | 11 |         |    0 | 00/0200               | ;-----------------------------------------------------------------------------
-  190 |  3        include/defs.asm      2 | Comment     | 11 |         |    0 | 00/0200               | ; EQUATES
-  191 |  3        include/defs.asm      3 | Comment     | 11 |         |    0 | 00/0200               | ;-----------------------------------------------------------------------------
-  192 |  3        include/defs.asm      4 | Empty       | 11 |         |    0 | 00/0200               |                                  
-  193 |  3        include/defs.asm      5 | Equivalence | 11 |         |    0 | 00/0200               | SEG0        EQU   $01            
-  194 |  3        include/defs.asm      6 | Equivalence | 11 |         |    0 | 00/0200               | SEG1        EQU   $02            
-  195 |  3        include/defs.asm      7 | Equivalence | 11 |         |    0 | 00/0200               | SEG2        EQU   $04            
-  196 |  3        include/defs.asm      8 | Equivalence | 11 |         |    0 | 00/0200               | SEG3        EQU   $08            
-  197 |  3        include/defs.asm      9 | Equivalence | 11 |         |    0 | 00/0200               | SEG4        EQU   $10            
-  198 |  3        include/defs.asm     10 | Equivalence | 11 |         |    0 | 00/0200               | SEG5        EQU   $20            
-  199 |  3        include/defs.asm     11 | Equivalence | 11 |         |    0 | 00/0200               | SEG6        EQU   $40            
-  200 |  3        include/defs.asm     12 | Equivalence | 11 |         |    0 | 00/0200               | SEGCLR      EQU   $80            
-  201 |  3        include/defs.asm     13 | Empty       | 11 |         |    0 | 00/0200               |                                  
-  202 |  1              scroll.asm     21 | Directive   | 11 |         |    0 | 00/0200               |             PUT   include/macros.asm
-  203 |  4      include/macros.asm      1 | Empty       | 11 |         |    0 | 00/0200               |                                  
-  204 |  1              scroll.asm     22 | Empty       | 11 |         |    0 | 00/0200               |                                  
-  205 |  1              scroll.asm     23 | Directive   | 11 |         |    0 | 00/0200               |             MX    %11            ; 11 tells Merlin32 that A, X and Y are
-  206 |  1              scroll.asm     24 | Comment     | 11 |         |    0 | 00/0200               |                                 ;   8 bit registers
-  207 |  1              scroll.asm     25 | Empty       | 11 |         |    0 | 00/0200               |                                  
-  208 |  1              scroll.asm     26 | Code        | 11 |         |    1 | 00/0200 : 58          |             cli                  
-  209 |  1              scroll.asm     27 | Code        | 11 |         |    1 | 00/0201 : D8          |             cld                  
-  210 |  1              scroll.asm     28 | Empty       | 11 |         |    0 | 00/0202               |                                  
-  211 |  1              scroll.asm     29 | Code        | 11 |         |    2 | 00/0202 : A2 00       | LOOP        LDX   #$00           ; init character offset
-  212 |  1              scroll.asm     30 | Code        | 11 |         |    2 | 00/0204 : A0 09       |             LDY   #$09           ; init segment offset
-  213 |  1              scroll.asm     31 | Code        | 11 |         |    2 | 00/0206 : A9 7F       | LOOP2       LDA   #$7F           ; set directional
-  214 |  1              scroll.asm     32 | Code        | 11 |         |    3 | 00/0208 : 8D 41 17    |             STA   {$1741}        ;    register
-  215 |  1              scroll.asm     33 | Empty       | 11 |         |    0 | 00/020B               |                                  
-  216 |  1              scroll.asm     34 | Code        | 11 |         |    3 | 00/020B : 8C 42 17    | PRINT       STY   {$1742}        ; set up segment to write character to
-  217 |  1              scroll.asm     35 | Code        | 11 |  2      |    3 | 00/020E : BD 49 02    |             LDA   DATA,X         ; load next character
-  218 |  1              scroll.asm     36 | Empty       | 11 |         |    0 | 00/0211               |                                  
-  219 |  1              scroll.asm     37 | Comment     | 11 |         |    0 | 00/0211               |             ; if next char is $EA i.e. end of string, move X back to the beginning of the data
-  220 |  1              scroll.asm     38 | Empty       | 11 |         |    0 | 00/0211               |                                  
-  221 |  1              scroll.asm     39 | Code        | 11 |         |    2 | 00/0211 : C9 EA       |             CMP   #$EA           
-  222 |  1              scroll.asm     40 | Code        | 11 |         |    2 | 00/0213 : D0 05       |             BNE   NONZ           ; check for terminating character
-  223 |  1              scroll.asm     41 | Code        | 11 |         |    2 | 00/0215 : A2 00       |             LDX   #$00           ; set char offset back to beginning of the data
-  224 |  1              scroll.asm     42 | Code        | 11 |  2      |    3 | 00/0217 : 4C 20 02    |             JMP   TERM           ;  and carry on
-  225 |  1              scroll.asm     43 | Empty       | 11 |         |    0 | 00/021A               |                                  
-  226 |  1              scroll.asm     44 | Code        | 11 |         |    3 | 00/021A : 8D 40 17    | NONZ        STA   {$1740}        ; output character
-  227 |  1              scroll.asm     45 | Code        | 11 |         |    1 | 00/021D : E8          |             INX                  ; increment character offset
-  228 |  1              scroll.asm     46 | Code        | 11 |         |    1 | 00/021E : C8          |             INY                  ; increment segment offset
-  229 |  1              scroll.asm     47 | Code        | 11 |         |    1 | 00/021F : C8          |             INY                  ; increment segment offset
-  230 |  1              scroll.asm     48 | Empty       | 11 |         |    0 | 00/0220               |                                  
-  231 |  1              scroll.asm     49 | Code        | 11 |         |    2 | 00/0220 : C0 15       | TERM        CPY   #$15           ; have we moved passed last segment
-  232 |  1              scroll.asm     50 | Code        | 11 |         |    2 | 00/0222 : 90 E7       |             BCC   PRINT          ; < last seg so print again
-  233 |  1              scroll.asm     51 | Code        | 11 |         |    2 | 00/0224 : A0 09       |             LDY   #$09           ; init segment offset
-  234 |  1              scroll.asm     52 | Empty       | 11 |         |    0 | 00/0226               |                                  
-  235 |  1              scroll.asm     53 | Comment     | 11 |         |    0 | 00/0226               |             ;JSR DELAY
-  236 |  1              scroll.asm     54 | Code        | 11 |  2      |    3 | 00/0226 : 4C 06 02    |             JMP   LOOP2          ; otherwise print next character
-  237 |  1              scroll.asm     55 | Empty       | 11 |         |    0 | 00/0229               |                                  
-  238 |  1              scroll.asm     56 | Comment     | 11 |         |    0 | 00/0229               | ;=============================================================================
-  239 |  1              scroll.asm     57 | Empty       | 11 |         |    0 | 00/0229               | DELAY                            
-  240 |  1              scroll.asm     58 | Comment     | 11 |         |    0 | 00/0229               | ;=============================================================================
-  241 |  1              scroll.asm     59 | Empty       | 11 |         |    0 | 00/0229               |                                  
-  242 |  1              scroll.asm     60 | Code        | 11 |         |    1 | 00/0229 : 48          |             PHA                  
-  243 |  1              scroll.asm     61 | Code        | 11 |         |    1 | 00/022A : 8A          |             TXA                  
-  244 |  1              scroll.asm     62 | Code        | 11 |         |    1 | 00/022B : 48          |             PHA                  
-  245 |  1              scroll.asm     63 | Code        | 11 |         |    1 | 00/022C : 98          |             TYA                  
-  246 |  1              scroll.asm     64 | Code        | 11 |         |    1 | 00/022D : 48          |             PHA                  
-  247 |  1              scroll.asm     65 | Empty       | 11 |         |    0 | 00/022E               |                                  
-  248 |  1              scroll.asm     66 | Code        | 11 |         |    2 | 00/022E : A9 02       |             LDA   #02            ; Cycles
-  249 |  1              scroll.asm     67 | Code        | 11 |         |    2 | 00/0230 : 85 00       |             STA   $0000          
-  250 |  1              scroll.asm     68 | Code        | 11 |         |    2 | 00/0232 : C6 00       | DELAY1      DEC   $0000          ;6
-  251 |  1              scroll.asm     69 | Code        | 11 |         |    2 | 00/0234 : F0 0D       |             BEQ   DELAYDONE      ;2 (3 when $0000=0)
-  252 |  1              scroll.asm     70 | Code        | 11 |         |    2 | 00/0236 : A2 00       |             LDX   #$00           ;2
-  253 |  1              scroll.asm     71 | Code        | 11 |         |    2 | 00/0238 : A0 00       | DELAY2      LDY   #$00           ;2
-  254 |  1              scroll.asm     72 | Code        | 11 |         |    1 | 00/023A : 88          | DELAY3      DEY                  ;2
-  255 |  1              scroll.asm     73 | Code        | 11 |         |    2 | 00/023B : D0 FD       |             BNE   DELAY3         ;3 (2 when Y=0)
-  256 |  1              scroll.asm     74 | Code        | 11 |         |    1 | 00/023D : CA          |             DEX                  ;2
-  257 |  1              scroll.asm     75 | Code        | 11 |         |    2 | 00/023E : D0 F8       |             BNE   DELAY2         ;3 (2 when X=0)
-  258 |  1              scroll.asm     76 | Code        | 11 |  2      |    3 | 00/0240 : 4C 32 02    |             JMP   DELAY1         ;3
-  259 |  1              scroll.asm     77 | Code        | 11 |         |    1 | 00/0243 : 68          | DELAYDONE   PLA                  
-  260 |  1              scroll.asm     78 | Code        | 11 |         |    1 | 00/0244 : A8          |             TAY                  
-  261 |  1              scroll.asm     79 | Code        | 11 |         |    1 | 00/0245 : 68          |             PLA                  
-  262 |  1              scroll.asm     80 | Code        | 11 |         |    1 | 00/0246 : AA          |             TAX                  
-  263 |  1              scroll.asm     81 | Code        | 11 |         |    1 | 00/0247 : 68          |             PLA                  
-  264 |  1              scroll.asm     82 | Code        | 11 |         |    1 | 00/0248 : 60          |             RTS                  
-  265 |  1              scroll.asm     83 | Empty       | 11 |         |    0 | 00/0249               |                                  
-  266 |  1              scroll.asm     84 | Comment     | 11 |         |    0 | 00/0249               | ;=============================================================================
-  267 |  1              scroll.asm     85 | Empty       | 11 |         |    0 | 00/0249               | DATA                             
-  268 |  1              scroll.asm     86 | Comment     | 11 |         |    0 | 00/0249               | ;=============================================================================
-  269 |  1              scroll.asm     87 | Empty       | 11 |         |    0 | 00/0249               |                                  
-  270 |  1              scroll.asm     88 | Data        | 11 |         |    6 | 00/0249 : 00 00 00 00 |             DB    {$00},{$00},{$00},{$00},{$00},{$F6}
-      |                                   |             |    |         |      |           00 F6       |
-  271 |  1              scroll.asm     89 | Data        | 11 |         |    6 | 00/024F : 00 00 00 00 |             DB    {$00},{$00},{$00},{$00},{$F6},{$F9}
-      |                                   |             |    |         |      |           F6 F9       |
-  272 |  1              scroll.asm     90 | Data        | 11 |         |    6 | 00/0255 : 00 00 00 F6 |             DB    {$00},{$00},{$00},{$F6},{$F9},{$B8}
-      |                                   |             |    |         |      |           F9 B8       |
-  273 |  1              scroll.asm     91 | Data        | 11 |         |    6 | 00/025B : 00 00 F6 F9 |             DB    {$00},{$00},{$F6},{$F9},{$B8},{$B8}
-      |                                   |             |    |         |      |           B8 B8       |
-  274 |  1              scroll.asm     92 | Data        | 11 |         |    6 | 00/0261 : 00 F6 F9 B8 |             DB    {$00},{$F6},{$F9},{$B8},{$B8},{$BF}
-      |                                   |             |    |         |      |           B8 BF       |
-  275 |  1              scroll.asm     93 | Data        | 11 |         |    6 | 00/0267 : F6 F9 B8 B8 |             DB    {$F6},{$F9},{$B8},{$B8},{$BF},{$00}
-      |                                   |             |    |         |      |           BF 00       |
-  276 |  1              scroll.asm     94 | Data        | 11 |         |    6 | 00/026D : F9 B8 B8 BF |             DB    {$F9},{$B8},{$B8},{$BF},{$00},{$00}
-      |                                   |             |    |         |      |           00 00       |
-  277 |  1              scroll.asm     95 | Data        | 11 |         |    6 | 00/0273 : B8 B8 BF 00 |             DB    {$B8},{$B8},{$BF},{$00},{$00},{$00}
-      |                                   |             |    |         |      |           00 00       |
-  278 |  1              scroll.asm     96 | Data        | 11 |         |    6 | 00/0279 : B8 BF 00 00 |             DB    {$B8},{$BF},{$00},{$00},{$00},{$00}
-      |                                   |             |    |         |      |           00 00       |
-  279 |  1              scroll.asm     97 | Data        | 11 |         |    6 | 00/027F : BF 00 00 00 |             DB    {$BF},{$00},{$00},{$00},{$00},{$00}
-      |                                   |             |    |         |      |           00 00       |
-  280 |  1              scroll.asm     98 | Data        | 11 |         |    6 | 00/0285 : 00 00 00 00 |             DB    {$00},{$00},{$00},{$00},{$00},{$00}
-      |                                   |             |    |         |      |           00 00       |
-  281 |  1              scroll.asm     99 | Empty       | 11 |         |    0 | 00/028B               |                                  
-  282 |  1              scroll.asm    100 | Data        | 11 |         |    6 | 00/028B : 00 00 00 00 |             DB    {$00},{$00},{$00},{$00},{$00},{$BD}
-      |                                   |             |    |         |      |           00 BD       |
-  283 |  1              scroll.asm    101 | Data        | 11 |         |    6 | 00/0291 : 00 00 00 00 |             DB    {$00},{$00},{$00},{$00},{$BD},{$B8}
-      |                                   |             |    |         |      |           BD B8       |
-  284 |  1              scroll.asm    102 | Data        | 11 |         |    6 | 00/0297 : 00 00 00 BD |             DB    {$00},{$00},{$00},{$BD},{$B8},{$F7}
-      |                                   |             |    |         |      |           B8 F7       |
-  285 |  1              scroll.asm    103 | Data        | 11 |         |    6 | 00/029D : 00 00 BD B8 |             DB    {$00},{$00},{$BD},{$B8},{$F7},{$ED}
-      |                                   |             |    |         |      |           F7 ED       |
-  286 |  1              scroll.asm    104 | Data        | 11 |         |    6 | 00/02A3 : 00 BD B8 F7 |             DB    {$00},{$BD},{$B8},{$F7},{$ED},{$ED}
-      |                                   |             |    |         |      |           ED ED       |
-  287 |  1              scroll.asm    105 | Data        | 11 |         |    6 | 00/02A9 : BD B8 B8 ED |             DB    {$BD},{$B8},{$B8},{$ED},{$ED},{$F8}
-      |                                   |             |    |         |      |           ED F8       |
-  288 |  1              scroll.asm    106 | Data        | 11 |         |    6 | 00/02AF : B8 F7 ED ED |             DB    {$B8},{$F7},{$ED},{$ED},{$F8},{$F8}
-      |                                   |             |    |         |      |           F8 F8       |
-  289 |  1              scroll.asm    107 | Data        | 11 |         |    6 | 00/02B5 : F7 ED ED F8 |             DB    {$F7},{$ED},{$ED},{$F8},{$F8},{$EE}
-      |                                   |             |    |         |      |           F8 EE       |
-  290 |  1              scroll.asm    108 | Data        | 11 |         |    6 | 00/02BB : ED ED F8 F8 |             DB    {$ED},{$ED},{$F8},{$F8},{$EE},{$00}
-      |                                   |             |    |         |      |           EE 00       |
-  291 |  1              scroll.asm    109 | Data        | 11 |         |    6 | 00/02C1 : ED F8 F8 EE |             DB    {$ED},{$F8},{$F8},{$EE},{$00},{$00}
-      |                                   |             |    |         |      |           00 00       |
-  292 |  1              scroll.asm    110 | Data        | 11 |         |    6 | 00/02C7 : F8 F8 EE 00 |             DB    {$F8},{$F8},{$EE},{$00},{$00},{$00}
-      |                                   |             |    |         |      |           00 00       |
-  293 |  1              scroll.asm    111 | Data        | 11 |         |    6 | 00/02CD : F8 EE 00 00 |             DB    {$F8},{$EE},{$00},{$00},{$00},{$00}
-      |                                   |             |    |         |      |           00 00       |
-  294 |  1              scroll.asm    112 | Data        | 11 |         |    6 | 00/02D3 : EE 00 00 00 |             DB    {$EE},{$00},{$00},{$00},{$00},{$00}
-      |                                   |             |    |         |      |           00 00       |
-  295 |  1              scroll.asm    113 | Data        | 11 |         |    6 | 00/02D9 : 00 00 00 00 |             DB    {$00},{$00},{$00},{$00},{$00},{$00}
-      |                                   |             |    |         |      |           00 00       |
-  296 |  1              scroll.asm    114 | Empty       | 11 |         |    0 | 00/02DF               |                                  
-  297 |  1              scroll.asm    115 | Empty       | 11 |         |    0 | 00/02DF               |                                  
-  298 |  1              scroll.asm    116 | Empty       | 11 |         |    0 | 00/02DF               |                                  
-  299 |  1              scroll.asm    117 | Empty       | 11 |         |    0 | 00/02DF               |                                  
-  300 |  1              scroll.asm    118 | Data        | 11 |         |    1 | 00/02DF : EA          |             DB    $EA            
-  301 |  1              scroll.asm    119 | Empty       | 11 |         |    0 | 00/02E0               |                                  
-  302 |  1              scroll.asm    120 | Directive   | 11 |         |    0 | 00/02E0               |             PUT   ./include/lib.asm
-  303 |  5       ./include/lib.asm      1 | Empty       | 11 |         |    0 | 00/02E0               |                                  
-  304 |  1              scroll.asm    121 | Empty       | 11 |         |    0 | 00/02E0               |                                  
-  305 |  1              scroll.asm    122 | Empty       | 11 |         |    0 | 00/02E0               |                                  
-  306 |  1              scroll.asm    123 | Empty       | 11 |         |    0 | 00/02E0               |                                  
-------+-----------------------------------+-------------+----+---------+------+-----------------------+-------------------------------------------------------------------
+    7 |  1              scroll.asm      7 | Comment     | 11 |         |    0 | 00/0200               | ; Licence:
+    8 |  1              scroll.asm      8 | Comment     | 11 |         |    0 | 00/0200               | ;       None
+    9 |  1              scroll.asm      9 | Comment     | 11 |         |    0 | 00/0200               | ;
+   10 |  1              scroll.asm     10 | Comment     | 11 |         |    0 | 00/0200               | ; Assembler:
+   11 |  1              scroll.asm     11 | Comment     | 11 |         |    0 | 00/0200               | ;       Merlin32 compiler by Brutal Delux
+   12 |  1              scroll.asm     12 | Comment     | 11 |         |    0 | 00/0200               | ;       https://www.brutaldeluxe.fr/products/crossdevtools/merlin/index.html
+   13 |  1              scroll.asm     13 | Comment     | 11 |         |    0 | 00/0200               | ;       Load to $0200
+   14 |  1              scroll.asm     14 | Comment     | 11 |         |    0 | 00/0200               | ;
+   15 |  1              scroll.asm     15 | Comment     | 11 |         |    0 | 00/0200               | ;-----------------------------------------------------------------------------
+   16 |  1              scroll.asm     16 | Comment     | 11 |         |    0 | 00/0200               | ; Date          Comment
+   17 |  1              scroll.asm     17 | Comment     | 11 |         |    0 | 00/0200               | ;-----------------------------------------------------------------------------
+   18 |  1              scroll.asm     18 | Comment     | 11 |         |    0 | 00/0200               | ; 10.08.2024    Created for the Merlin32 compiler by Brutal Delux
+   19 |  1              scroll.asm     19 | Comment     | 11 |         |    0 | 00/0200               | ;
+   20 |  1              scroll.asm     20 | Comment     | 11 |         |    0 | 00/0200               | ;
+   21 |  1              scroll.asm     21 | Comment     | 11 |         |    0 | 00/0200               | ;=============================================================================
+   22 |  1              scroll.asm     22 | Empty       | 11 |         |    0 | 00/0200               |                                  
+   23 |  1              scroll.asm     23 | Directive   | 11 |         |    0 | 00/0200               |             PUT   include/kim-symbols.asm
+   24 |  2 include/kim-symbols.asm      1 | Empty       | 11 |         |    0 | 00/0200               |                                  
+   25 |  2 include/kim-symbols.asm      2 | Comment     | 11 |         |    0 | 00/0200               | ;        ROM ROUTINES
+   26 |  2 include/kim-symbols.asm      3 | Empty       | 11 |         |    0 | 00/0200               |                                  
+   27 |  2 include/kim-symbols.asm      4 | Equivalence | 11 |         |    0 | 00/0200               | AK          EQU   $1EFE          ; Check for key depressed. A non-zero: no key down. A equal 0, key down.
+   28 |  2 include/kim-symbols.asm      5 | Equivalence | 11 |         |    0 | 00/0200               | SCAND       EQU   $1F19          ; Display address and contents.
+   29 |  2 include/kim-symbols.asm      6 | Equivalence | 11 |         |    0 | 00/0200               | SCANDS      EQU   $1F1F          ; Output six hex characters on display. Stored in $00F9, $00FA, $00FB.
+   30 |  2 include/kim-symbols.asm      7 | Equivalence | 11 |         |    0 | 00/0200               | CONVD       EQU   $1F48          ; Output HEX digit
+   31 |  2 include/kim-symbols.asm      8 | Equivalence | 11 |         |    0 | 00/0200               | OUTPUT      EQU   $1F4E          ; Output 7 segment code stored in A register (to lit up a custom segment)
+   32 |  2 include/kim-symbols.asm      9 | Equivalence | 11 |         |    0 | 00/0200               | KEYIN       EQU   $1F40          ; Open up keyboard channel. Call before using GETKEY (or call SCANDS).
+   33 |  2 include/kim-symbols.asm     10 | Equivalence | 11 |         |    0 | 00/0200               | INCPT       EQU   $1F63          ; Increment display address.
+   34 |  2 include/kim-symbols.asm     11 | Equivalence | 11 |         |    0 | 00/0200               | GETKEY      EQU   $1F6A          ; Return key from keyboard. Value 0-F, 10(AD), 11(DA), 12(+), 13(GO), 14(PC), 15 (no keypress).
+   35 |  2 include/kim-symbols.asm     12 | Equivalence | 11 |         |    0 | 00/0200               | TABLE       EQU   $1FE7          ; Table of 7-segment patterns.
+   36 |  2 include/kim-symbols.asm     13 | Equivalence | 11 |         |    0 | 00/0200               | SAVE        EQU   $1C00          ; Normal interrupt entry point.
+   37 |  2 include/kim-symbols.asm     14 | Equivalence | 11 |         |    0 | 00/0200               | RST         EQU   $1C22          ; Reset return to monitor.
+   38 |  2 include/kim-symbols.asm     15 | Equivalence | 11 |         |    0 | 00/0200               | START       EQU   $1C4F          ; Return to monitor entry
+   39 |  2 include/kim-symbols.asm     16 | Empty       | 11 |         |    0 | 00/0200               |                                  
+   40 |  2 include/kim-symbols.asm     17 | Comment     | 11 |         |    0 | 00/0200               | ; IO
+   41 |  2 include/kim-symbols.asm     18 | Empty       | 11 |         |    0 | 00/0200               |                                  
+   42 |  2 include/kim-symbols.asm     19 | Equivalence | 11 |         |    0 | 00/0200               | SAD         EQU   $1740          ; 6530 A DATA
+   43 |  2 include/kim-symbols.asm     20 | Equivalence | 11 |         |    0 | 00/0200               | PADD        EQU   $1741          ; 6530 A DATA DIRECTION
+   44 |  2 include/kim-symbols.asm     21 | Equivalence | 11 |         |    0 | 00/0200               | SBD         EQU   $1742          ; 6530 B DATA
+   45 |  2 include/kim-symbols.asm     22 | Equivalence | 11 |         |    0 | 00/0200               | PBDD        EQU   $1743          ; 6530 B DATA DIRECTION
+   46 |  2 include/kim-symbols.asm     23 | Equivalence | 11 |         |    0 | 00/0200               | CLK1T       EQU   $1744          ; DIV BY 1 TIME
+   47 |  2 include/kim-symbols.asm     24 | Equivalence | 11 |         |    0 | 00/0200               | CLK8T       EQU   $1745          ; DIV BY 8 TIME
+   48 |  2 include/kim-symbols.asm     25 | Equivalence | 11 |         |    0 | 00/0200               | CLK64T      EQU   $1746          ; DIV BY 64 TIME
+   49 |  2 include/kim-symbols.asm     26 | Equivalence | 11 |         |    0 | 00/0200               | CLKKT       EQU   $1747          ; DIV BY 1024 TIME
+   50 |  2 include/kim-symbols.asm     27 | Equivalence | 11 |         |    0 | 00/0200               | CLKRDI      EQU   $1747          ; READ TIME OUT BIT
+   51 |  2 include/kim-symbols.asm     28 | Equivalence | 11 |         |    0 | 00/0200               | CLKRDT      EQU   $1746          ; READ TIME
+   52 |  2 include/kim-symbols.asm     29 | Empty       | 11 |         |    0 | 00/0200               |                                  
+   53 |  2 include/kim-symbols.asm     30 | Comment     | 11 |         |    0 | 00/0200               | ;       MPU REG.  SAVX AREA IN PAGE 0
+   54 |  2 include/kim-symbols.asm     31 | Empty       | 11 |         |    0 | 00/0200               |                                  
+   55 |  2 include/kim-symbols.asm     32 | Equivalence | 11 |         |    0 | 00/0200               | PCL         EQU   $EF            ; PROGRAM CNT LOW
+   56 |  2 include/kim-symbols.asm     33 | Equivalence | 11 |         |    0 | 00/0200               | PCH         EQU   $F0            ; PROGRAM CNT HI
+   57 |  2 include/kim-symbols.asm     34 | Equivalence | 11 |         |    0 | 00/0200               | PREG        EQU   $F1            ; CURRENT STATUS REG
+   58 |  2 include/kim-symbols.asm     35 | Equivalence | 11 |         |    0 | 00/0200               | SPUSER      EQU   $F2            ; CURRENT STACK POINTER
+   59 |  2 include/kim-symbols.asm     36 | Equivalence | 11 |         |    0 | 00/0200               | ACC         EQU   $F3            ; ACCUMULATOR
+   60 |  2 include/kim-symbols.asm     37 | Equivalence | 11 |         |    0 | 00/0200               | YREG        EQU   $F4            ; Y INDEX
+   61 |  2 include/kim-symbols.asm     38 | Equivalence | 11 |         |    0 | 00/0200               | XREG        EQU   $F5            ; X INDEX
+   62 |  2 include/kim-symbols.asm     39 | Empty       | 11 |         |    0 | 00/0200               |                                  
+   63 |  2 include/kim-symbols.asm     40 | Comment     | 11 |         |    0 | 00/0200               | ;       KIM FIXED AREA IN PAGE 0
+   64 |  2 include/kim-symbols.asm     41 | Empty       | 11 |         |    0 | 00/0200               |                                  
+   65 |  2 include/kim-symbols.asm     42 | Equivalence | 11 |         |    0 | 00/0200               | CHKHI       EQU   $F6            
+   66 |  2 include/kim-symbols.asm     43 | Equivalence | 11 |         |    0 | 00/0200               | CHKSUM      EQU   $F7            
+   67 |  2 include/kim-symbols.asm     44 | Equivalence | 11 |         |    0 | 00/0200               | INL         EQU   $F8            ; INPUT BUFFER
+   68 |  2 include/kim-symbols.asm     45 | Equivalence | 11 |         |    0 | 00/0200               | INH         EQU   $F9            ; INPUT BUFFER
+   69 |  2 include/kim-symbols.asm     46 | Equivalence | 11 |         |    0 | 00/0200               | POINTL      EQU   $FA            ; LSB OF OPEN CELL
+   70 |  2 include/kim-symbols.asm     47 | Equivalence | 11 |         |    0 | 00/0200               | POINTH      EQU   $FB            ; MSB OF OPEN CELL
+   71 |  2 include/kim-symbols.asm     48 | Equivalence | 11 |         |    0 | 00/0200               | TEMP        EQU   $FC            
+   72 |  2 include/kim-symbols.asm     49 | Equivalence | 11 |         |    0 | 00/0200               | TMPX        EQU   $FD            
+   73 |  2 include/kim-symbols.asm     50 | Equivalence | 11 |         |    0 | 00/0200               | CHAR        EQU   $FE            
+   74 |  2 include/kim-symbols.asm     51 | Equivalence | 11 |         |    0 | 00/0200               | MODE        EQU   $FF            
+   75 |  2 include/kim-symbols.asm     52 | Empty       | 11 |         |    0 | 00/0200               |                                  
+   76 |  2 include/kim-symbols.asm     53 | Comment     | 11 |         |    0 | 00/0200               | ;       KIM FIXED AREA IN PAGE 23
+   77 |  2 include/kim-symbols.asm     54 | Empty       | 11 |         |    0 | 00/0200               |                                  
+   78 |  2 include/kim-symbols.asm     55 | Equivalence | 11 |         |    0 | 00/0200               | CHKL        EQU   $17E7          
+   79 |  2 include/kim-symbols.asm     56 | Equivalence | 11 |         |    0 | 00/0200               | CHKH        EQU   $17E8          ; CHKSUM
+   80 |  2 include/kim-symbols.asm     57 | Equivalence | 11 |         |    0 | 00/0200               | SAVX        EQU   $17E9          
+   81 |  2 include/kim-symbols.asm     58 | Equivalence | 11 |         |    0 | 00/0200               | VEB         EQU   $17EC          ; VOLATILE EXECUTION BLOCK
+   82 |  2 include/kim-symbols.asm     59 | Equivalence | 11 |         |    0 | 00/0200               | CNTL30      EQU   $17F2          ; TTY DELAY
+   83 |  2 include/kim-symbols.asm     60 | Equivalence | 11 |         |    0 | 00/0200               | CNTH30      EQU   $17F3          ; TTY DELAY
+   84 |  2 include/kim-symbols.asm     61 | Equivalence | 11 |         |    0 | 00/0200               | TIMH        EQU   $7F4           
+   85 |  2 include/kim-symbols.asm     62 | Equivalence | 11 |         |    0 | 00/0200               | SAL         EQU   $17F5          ; LOW STARTING ADDRESS
+   86 |  2 include/kim-symbols.asm     63 | Equivalence | 11 |         |    0 | 00/0200               | SAH         EQU   $17F6          ; HI STARTING ADDRESS
+   87 |  2 include/kim-symbols.asm     64 | Equivalence | 11 |         |    0 | 00/0200               | EAL         EQU   $17F7          ; LOW ENDING ADDRESS;
+   88 |  2 include/kim-symbols.asm     65 | Equivalence | 11 |         |    0 | 00/0200               | EAH         EQU   $17F8          ; HI ENDING ADDRESS
+   89 |  2 include/kim-symbols.asm     66 | Equivalence | 11 |         |    0 | 00/0200               | ID          EQU   $17F9          ; TAPE PROGRAM ID NUMBER
+   90 |  2 include/kim-symbols.asm     67 | Empty       | 11 |         |    0 | 00/0200               |                                  
+   91 |  2 include/kim-symbols.asm     68 | Comment     | 11 |         |    0 | 00/0200               | ;       INTERRUPT VECTORS
+   92 |  2 include/kim-symbols.asm     69 | Empty       | 11 |         |    0 | 00/0200               |                                  
+   93 |  2 include/kim-symbols.asm     70 | Equivalence | 11 |         |    0 | 00/0200               | NMIV        EQU   $17FA          ; STOP VECTOR (STOP=1C00)
+   94 |  2 include/kim-symbols.asm     71 | Equivalence | 11 |         |    0 | 00/0200               | RSTV        EQU   $17FC          ; RST VECTOR
+   95 |  2 include/kim-symbols.asm     72 | Equivalence | 11 |         |    0 | 00/0200               | IRQV        EQU   $17FE          ; IRQ VECTOR (BRK= 1C00)
+   96 |  2 include/kim-symbols.asm     73 | Empty       | 11 |         |    0 | 00/0200               |                                  
+   97 |  2 include/kim-symbols.asm     74 | Comment     | 11 |         |    0 | 00/0200               | ;       SEVEN SEGMENT DISPLAYS
+   98 |  2 include/kim-symbols.asm     75 | Empty       | 11 |         |    0 | 00/0200               |                                  
+   99 |  2 include/kim-symbols.asm     76 | Equivalence | 11 |         |    0 | 00/0200               | SEG-1       EQU   $09            
+  100 |  2 include/kim-symbols.asm     77 | Equivalence | 11 |         |    0 | 00/0200               | SEG-2       EQU   $0B            
+  101 |  2 include/kim-symbols.asm     78 | Equivalence | 11 |         |    0 | 00/0200               | SEG-3       EQU   $0D            
+  102 |  2 include/kim-symbols.asm     79 | Equivalence | 11 |         |    0 | 00/0200               | SEG-4       EQU   $0F            
+  103 |  2 include/kim-symbols.asm     80 | Equivalence | 11 |         |    0 | 00/0200               | SEG-5       EQU   $11            
+  104 |  2 include/kim-symbols.asm     81 | Equivalence | 11 |         |    0 | 00/0200               | SEG-6       EQU   $13            
+  105 |  2 include/kim-symbols.asm     82 | Empty       | 11 |         |    0 | 00/0200               |                                  
+  106 |  2 include/kim-symbols.asm     83 | Comment     | 11 |         |    0 | 00/0200               | ;       SEGMENT LED LETTERS
+  107 |  2 include/kim-symbols.asm     84 | Empty       | 11 |         |    0 | 00/0200               |                                  
+  108 |  2 include/kim-symbols.asm     85 | Comment     | 11 |         |    0 | 00/0200               | ; Relationship between bit and segment
+  109 |  2 include/kim-symbols.asm     86 | Comment     | 11 |         |    0 | 00/0200               | ;
+  110 |  2 include/kim-symbols.asm     87 | Comment     | 11 |         |    0 | 00/0200               | ;  | -0- |
+  111 |  2 include/kim-symbols.asm     88 | Comment     | 11 |         |    0 | 00/0200               | ;  5     1
+  112 |  2 include/kim-symbols.asm     89 | Comment     | 11 |         |    0 | 00/0200               | ;  | -6- |
+  113 |  2 include/kim-symbols.asm     90 | Comment     | 11 |         |    0 | 00/0200               | ;  4     2
+  114 |  2 include/kim-symbols.asm     91 | Comment     | 11 |         |    0 | 00/0200               | ;  | -3- |
+  115 |  2 include/kim-symbols.asm     92 | Empty       | 11 |         |    0 | 00/0200               |                                  
+  116 |  2 include/kim-symbols.asm     93 | Comment     | 11 |         |    0 | 00/0200               | ; e.g. a lower case 'd' would include bits 1,2,3,4,6 = 1101 1110 = $5E
+  117 |  2 include/kim-symbols.asm     94 | Empty       | 11 |         |    0 | 00/0200               |                                  
+  118 |  2 include/kim-symbols.asm     95 | Comment     | 11 |         |    0 | 00/0200               | ; Upper Case Letters
+  119 |  2 include/kim-symbols.asm     96 | Empty       | 11 |         |    0 | 00/0200               |                                  
+  120 |  2 include/kim-symbols.asm     97 | Equivalence | 11 |         |    0 | 00/0200               | LA          EQU   $F7            
+  121 |  2 include/kim-symbols.asm     98 | Equivalence | 11 |         |    0 | 00/0200               | LB          EQU   $FF            
+  122 |  2 include/kim-symbols.asm     99 | Equivalence | 11 |         |    0 | 00/0200               | LC          EQU   $B9            
+  123 |  2 include/kim-symbols.asm    100 | Equivalence | 11 |         |    0 | 00/0200               | LD          EQU   $BF            
+  124 |  2 include/kim-symbols.asm    101 | Equivalence | 11 |         |    0 | 00/0200               | LE          EQU   $79            
+  125 |  2 include/kim-symbols.asm    102 | Equivalence | 11 |         |    0 | 00/0200               | LF          EQU   $F1            
+  126 |  2 include/kim-symbols.asm    103 | Equivalence | 11 |         |    0 | 00/0200               | LG          EQU   $BD            
+  127 |  2 include/kim-symbols.asm    104 | Equivalence | 11 |         |    0 | 00/0200               | LH          EQU   $76            
+  128 |  2 include/kim-symbols.asm    105 | Equivalence | 11 |         |    0 | 00/0200               | LI          EQU   $86            
+  129 |  2 include/kim-symbols.asm    106 | Equivalence | 11 |         |    0 | 00/0200               | LJ          EQU   $9E            
+  130 |  2 include/kim-symbols.asm    107 | Comment     | 11 |         |    0 | 00/0200               | ; LK
+  131 |  2 include/kim-symbols.asm    108 | Equivalence | 11 |         |    0 | 00/0200               | LL          EQU   $38            
+  132 |  2 include/kim-symbols.asm    109 | Comment     | 11 |         |    0 | 00/0200               | ; LL
+  133 |  2 include/kim-symbols.asm    110 | Comment     | 11 |         |    0 | 00/0200               | ; LM
+  134 |  2 include/kim-symbols.asm    111 | Equivalence | 11 |         |    0 | 00/0200               | LO          EQU   $3F            
+  135 |  2 include/kim-symbols.asm    112 | Equivalence | 11 |         |    0 | 00/0200               | LP          EQU   $F3            
+  136 |  2 include/kim-symbols.asm    113 | Comment     | 11 |         |    0 | 00/0200               | ; LQ
+  137 |  2 include/kim-symbols.asm    114 | Comment     | 11 |         |    0 | 00/0200               | ; DEG-R
+  138 |  2 include/kim-symbols.asm    115 | Equivalence | 11 |         |    0 | 00/0200               | LS          EQU   $ED            
+  139 |  2 include/kim-symbols.asm    116 | Comment     | 11 |         |    0 | 00/0200               | ; LT
+  140 |  2 include/kim-symbols.asm    117 | Equivalence | 11 |         |    0 | 00/0200               | LU          EQU   $BE            
+  141 |  2 include/kim-symbols.asm    118 | Comment     | 11 |         |    0 | 00/0200               | ; LV
+  142 |  2 include/kim-symbols.asm    119 | Comment     | 11 |         |    0 | 00/0200               | ; LW
+  143 |  2 include/kim-symbols.asm    120 | Comment     | 11 |         |    0 | 00/0200               | ; LX
+  144 |  2 include/kim-symbols.asm    121 | Equivalence | 11 |         |    0 | 00/0200               | LY          EQU   $EE            
+  145 |  2 include/kim-symbols.asm    122 | Comment     | 11 |         |    0 | 00/0200               | ; LZ
+  146 |  2 include/kim-symbols.asm    123 | Empty       | 11 |         |    0 | 00/0200               |                                  
+  147 |  2 include/kim-symbols.asm    124 | Comment     | 11 |         |    0 | 00/0200               | ; Lower Case Letters
+  148 |  2 include/kim-symbols.asm    125 | Empty       | 11 |         |    0 | 00/0200               |                                  
+  149 |  2 include/kim-symbols.asm    126 | Equivalence | 11 |         |    0 | 00/0200               | La          EQU   $DE            
+  150 |  2 include/kim-symbols.asm    127 | Equivalence | 11 |         |    0 | 00/0200               | Lb          EQU   $FC            
+  151 |  2 include/kim-symbols.asm    128 | Equivalence | 11 |         |    0 | 00/0200               | Lc          EQU   $D8            
+  152 |  2 include/kim-symbols.asm    129 | Equivalence | 11 |         |    0 | 00/0200               | Ld          EQU   $DE            
+  153 |  2 include/kim-symbols.asm    130 | Comment     | 11 |         |    0 | 00/0200               | ; Le
+  154 |  2 include/kim-symbols.asm    131 | Equivalence | 11 |         |    0 | 00/0200               | Lf          EQU   $F1            
+  155 |  2 include/kim-symbols.asm    132 | Equivalence | 11 |         |    0 | 00/0200               | Lg          EQU   $EF            
+  156 |  2 include/kim-symbols.asm    133 | Equivalence | 11 |         |    0 | 00/0200               | Lh          EQU   $F4            
+  157 |  2 include/kim-symbols.asm    134 | Equivalence | 11 |         |    0 | 00/0200               | Li          EQU   $84            
+  158 |  2 include/kim-symbols.asm    135 | Comment     | 11 |         |    0 | 00/0200               | ; Lj
+  159 |  2 include/kim-symbols.asm    136 | Comment     | 11 |         |    0 | 00/0200               | ; Lk
+  160 |  2 include/kim-symbols.asm    137 | Equivalence | 11 |         |    0 | 00/0200               | Ll          EQU   $86            
+  161 |  2 include/kim-symbols.asm    138 | Comment     | 11 |         |    0 | 00/0200               | ; Lm
+  162 |  2 include/kim-symbols.asm    139 | Equivalence | 11 |         |    0 | 00/0200               | Ln          EQU   $D4            
+  163 |  2 include/kim-symbols.asm    140 | Equivalence | 11 |         |    0 | 00/0200               | Lo          EQU   $DC            
+  164 |  2 include/kim-symbols.asm    141 | Equivalence | 11 |         |    0 | 00/0200               | Lp          EQU   $F3            
+  165 |  2 include/kim-symbols.asm    142 | Comment     | 11 |         |    0 | 00/0200               | ; Lq
+  166 |  2 include/kim-symbols.asm    143 | Equivalence | 11 |         |    0 | 00/0200               | Lr          EQU   $DO            
+  167 |  2 include/kim-symbols.asm    144 | Comment     | 11 |         |    0 | 00/0200               | ; Ls
+  168 |  2 include/kim-symbols.asm    145 | Equivalence | 11 |         |    0 | 00/0200               | Lt          EQU   $F8            
+  169 |  2 include/kim-symbols.asm    146 | Equivalence | 11 |         |    0 | 00/0200               | Lu          EQU   $9C            
+  170 |  2 include/kim-symbols.asm    147 | Comment     | 11 |         |    0 | 00/0200               | ; Lv
+  171 |  2 include/kim-symbols.asm    148 | Comment     | 11 |         |    0 | 00/0200               | ; Lw
+  172 |  2 include/kim-symbols.asm    149 | Comment     | 11 |         |    0 | 00/0200               | ; Lx
+  173 |  2 include/kim-symbols.asm    150 | Equivalence | 11 |         |    0 | 00/0200               | Ly          EQU   $EE            
+  174 |  2 include/kim-symbols.asm    151 | Comment     | 11 |         |    0 | 00/0200               | ; Lz
+  175 |  2 include/kim-symbols.asm    152 | Empty       | 11 |         |    0 | 00/0200               |                                  
+  176 |  2 include/kim-symbols.asm    153 | Equivalence | 11 |         |    0 | 00/0200               | L1          EQU   $86            
+  177 |  2 include/kim-symbols.asm    154 | Equivalence | 11 |         |    0 | 00/0200               | L2          EQU   $DB            
+  178 |  2 include/kim-symbols.asm    155 | Equivalence | 11 |         |    0 | 00/0200               | L3          EQU   $CF            
+  179 |  2 include/kim-symbols.asm    156 | Equivalence | 11 |         |    0 | 00/0200               | L4          EQU   $E6            
+  180 |  2 include/kim-symbols.asm    157 | Equivalence | 11 |         |    0 | 00/0200               | L5          EQU   $ED            
+  181 |  2 include/kim-symbols.asm    158 | Equivalence | 11 |         |    0 | 00/0200               | L6          EQU   $FD            
+  182 |  2 include/kim-symbols.asm    159 | Equivalence | 11 |         |    0 | 00/0200               | L7          EQU   $87            
+  183 |  2 include/kim-symbols.asm    160 | Equivalence | 11 |         |    0 | 00/0200               | L8          EQU   $FF            
+  184 |  2 include/kim-symbols.asm    161 | Equivalence | 11 |         |    0 | 00/0200               | L9          EQU   $EF            
+  185 |  2 include/kim-symbols.asm    162 | Equivalence | 11 |         |    0 | 00/0200               | L0          EQU   $BF            
+  186 |  2 include/kim-symbols.asm    163 | Empty       | 11 |         |    0 | 00/0200               |                                  
+  187 |  2 include/kim-symbols.asm    164 | Equivalence | 11 |         |    0 | 00/0200               | LSPC        EQU   $00            
+  188 |  2 include/kim-symbols.asm    165 | Equivalence | 11 |         |    0 | 00/0200               | LDASH       EQU   $40            
+  189 |  2 include/kim-symbols.asm    166 | Empty       | 11 |         |    0 | 00/0200               |                                  
+  190 |  2 include/kim-symbols.asm    167 | Empty       | 11 |         |    0 | 00/0200               |                                  
+  191 |  2 include/kim-symbols.asm    168 | Empty       | 11 |         |    0 | 00/0200               |                                  
+  192 |  1              scroll.asm     24 | Empty       | 11 |         |    0 | 00/0200               |                                  
+  193 |  1              scroll.asm     25 | Directive   | 11 |         |    0 | 00/0200               |             MX    %11            ; 11 tells Merlin32 that A, X and Y are
+  194 |  1              scroll.asm     26 | Comment     | 11 |         |    0 | 00/0200               |                                 ;   8 bit registers
+  195 |  1              scroll.asm     27 | Empty       | 11 |         |    0 | 00/0200               |                                  
+  196 |  1              scroll.asm     28 | Code        | 11 |         |    1 | 00/0200 : 58          |             cli                  
+  197 |  1              scroll.asm     29 | Code        | 11 |         |    1 | 00/0201 : D8          |             cld                  
+  198 |  1              scroll.asm     30 | Empty       | 11 |         |    0 | 00/0202               |                                  
+  199 |  1              scroll.asm     31 | Comment     | 11 |         |    0 | 00/0202               | ;-----------------------------------------------------------------------------
+  200 |  1              scroll.asm     32 | Comment     | 11 |         |    0 | 00/0202               | ; Initialise
+  201 |  1              scroll.asm     33 | Comment     | 11 |         |    0 | 00/0202               | ;-----------------------------------------------------------------------------
+  202 |  1              scroll.asm     34 | Code        | 11 |         |    2 | 00/0202 : A9 7F       |             lda   #$7f           ; set directional registers
+  203 |  1              scroll.asm     35 | Code        | 11 |         |    3 | 00/0204 : 8D 41 17    |             sta   {$1741}        
+  204 |  1              scroll.asm     36 | Code        | 11 |         |    2 | 00/0207 : A9 3F       |             lda   #$3f           
+  205 |  1              scroll.asm     37 | Code        | 11 |         |    3 | 00/0209 : 8D 43 17    |             sta   {$1743}        
+  206 |  1              scroll.asm     38 | Empty       | 11 |         |    0 | 00/020C               |                                  
+  207 |  1              scroll.asm     39 | Empty       | 11 |         |    0 | 00/020C               | DISPLOOP                         
+  208 |  1              scroll.asm     40 | Code        | 11 |         |    2 | 00/020C : A2 00       |             ldx   #$00           ; initialise character offset
+  209 |  1              scroll.asm     41 | Code        | 11 |         |    2 | 00/020E : A0 09       |             ldy   #$09           ; init 7 segment offset
+  210 |  1              scroll.asm     42 | Empty       | 11 |         |    0 | 00/0210               |                                  
+  211 |  1              scroll.asm     43 | Empty       | 11 |         |    0 | 00/0210               | CHARLOOP                         
+  212 |  1              scroll.asm     44 | Code        | 11 |         |    2 | 00/0210 : A9 00       |             lda   #$00           
+  213 |  1              scroll.asm     45 | Code        | 11 |         |    3 | 00/0212 : 8D 40 17    |             sta   {$1740}        ; do it this way
+  214 |  1              scroll.asm     46 | Code        | 11 |         |    3 | 00/0215 : 8C 42 17    |             sty   {$1742}        ;   to remove flicker
+  215 |  1              scroll.asm     47 | Code        | 11 |  2      |    3 | 00/0218 : BD 2F 02    |             lda   DATA,x         
+  216 |  1              scroll.asm     48 | Code        | 11 |         |    3 | 00/021B : 8D 40 17    |             sta   {$1740}        
+  217 |  1              scroll.asm     49 | Empty       | 11 |         |    0 | 00/021E               |                                  
+  218 |  1              scroll.asm     50 | Code        | 11 |         |    1 | 00/021E : 8A          |             txa                  ; delay added to allow the led to fully light
+  219 |  1              scroll.asm     51 | Code        | 11 |         |    2 | 00/021F : A2 04       |             ldx   #$04           ;   helps a little with the genuine KIM-1
+  220 |  1              scroll.asm     52 | Empty       | 11 |         |    0 | 00/0221               | CHARDELAY                        
+  221 |  1              scroll.asm     53 | Code        | 11 |         |    1 | 00/0221 : CA          |             dex                  
+  222 |  1              scroll.asm     54 | Code        | 11 |         |    2 | 00/0222 : D0 FD       |             bne   CHARDELAY      ; glow up character
+  223 |  1              scroll.asm     55 | Code        | 11 |         |    1 | 00/0224 : AA          |             tax                  
+  224 |  1              scroll.asm     56 | Empty       | 11 |         |    0 | 00/0225               |                                  
+  225 |  1              scroll.asm     57 | Code        | 11 |         |    1 | 00/0225 : E8          |             inx                  
+  226 |  1              scroll.asm     58 | Code        | 11 |         |    1 | 00/0226 : C8          |             iny                  
+  227 |  1              scroll.asm     59 | Code        | 11 |         |    1 | 00/0227 : C8          |             iny                  
+  228 |  1              scroll.asm     60 | Code        | 11 |         |    2 | 00/0228 : E0 06       |             cpx   #6             
+  229 |  1              scroll.asm     61 | Code        | 11 |         |    2 | 00/022A : D0 E4       |             bne   CHARLOOP       
+  230 |  1              scroll.asm     62 | Code        | 11 |  2      |    3 | 00/022C : 4C 0C 02    |             jmp   DISPLOOP       ; refresh the display
+  231 |  1              scroll.asm     63 | Empty       | 11 |         |    0 | 00/022F               |                                  
+  232 |  1              scroll.asm     64 | Data        | 11 |         |    6 | 00/022F : 76 79 38 38 | DATA        DB    {$76},{$79},{$38},{$38},{$3F},{$00}
+      |                                   |             |    |         |      |           3F 00       |
+  233 |  1              scroll.asm     65 | Data        | 11 |         |    1 | 00/0235 : EA          |             DB    $EA            
+  234 |  1              scroll.asm     66 | Empty       | 11 |         |    0 | 00/0236               |                                  
+  235 |  1              scroll.asm     67 | Empty       | 11 |         |    0 | 00/0236               |                                  
+------+-----------------------------------+-------------+----+---------+------+-----------------------+----------------------------------------------------------------------

@@ -2,11 +2,4 @@
 ; EQUATES
 ;-----------------------------------------------------------------------------
 
-SEG0    EQU $01
-SEG1    EQU $02
-SEG2    EQU $04
-SEG3    EQU $08
-SEG4    EQU $10
-SEG5    EQU $20
-SEG6    EQU $40
-SEGCLR  EQU $80
+
