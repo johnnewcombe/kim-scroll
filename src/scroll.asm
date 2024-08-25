@@ -61,6 +61,6 @@ CHARDELAY
             bne CHARLOOP
             jmp DISPLOOP        ; refresh the display
 
-DATA        DB LH, LE, LL, LL, LO, LSPC
+DATA        DB LH, LE, LL, LL, LO, LSPC, LG, LL, LA, LS, LS, LSPC, Lt, Lt, LY
             DB $EA
 
