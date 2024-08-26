@@ -27,6 +27,7 @@
             MX  %11             ; 11 tells Merlin32 that A, X and Y are
                                 ;   8 bit registers
 
+
             cli
             cld
 
@@ -50,6 +51,9 @@
             sta $1707          ; set timer division
 
 DISPLOOP
+            ; TODO consider adding lead-in and lead-out programmatically
+            ;  rather than spaces in the data
+
             ldy $00             ; initialise character offset from Zero Page
             ldx #$09              ; init 7 segment offset
 
@@ -95,8 +99,6 @@ DONE        jmp DISPLOOP        ; refresh the display
 
 
 DATA
-            DB LSPC,LSPC,LSPC,LSPC,LSPC,Lr,LE,Lt,LO,LDASH,LF,LE,LS,Lt,LSPC,L2,L0,L2,L4
-            DB LSPC,LSPC,LSPC,LSPC,LSPC,LSPC,LG,LL,LA,LS,LS,LDASH,Lt,Lt,LY,
-            DB LSPC,LSPC,LSPC,LSPC,LSPC,LSPC
-            DB $EA
-
+            ;PUT include/data-alphabet.asm
+            PUT include/data-barbara.asm
+            ;PUT include/data-retrofest.asm
